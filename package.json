@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
     "lint": "biome check --write src",
     "lint:fix": "biome check --write --unsafe src",
     "docker:compose": "docker-compose --env-file .env.local",
@@ -22,5 +23,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^4.28.1"
+  }
 }
