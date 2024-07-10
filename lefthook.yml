@@ -1,0 +1,18 @@
+pre-push:
+  commands:
+    check:
+      glob: "*.js"
+      run: npx @biomejs/biome check --no-errors-on-unmatched --files-ignore-unknown=true {push_files}
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.js"
+      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    "lint commit message":
+      run: npx commitlint --edit {1}

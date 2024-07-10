@@ -7,11 +7,14 @@
   "scripts": {
     "start": "node src/server.js",
     "lint": "biome check --write src",
-    "lint:fix": "biome check --write --unsafe src"
+    "lint:fix": "biome check --write --unsafe src",
+    "prepare": "lefthook install"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@biomejs/biome": "1.8.3"
+    "@biomejs/biome": "1.8.3",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "lefthook": "^1.7.1"
   },
   "keywords": [],
   "author": "",
