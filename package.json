@@ -5,7 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "lint": "biome check --write src",
+    "lint:fix": "biome check --write --unsafe src"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3"
   },
   "keywords": [],
   "author": "",
