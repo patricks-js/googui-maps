@@ -6,4 +6,9 @@
       "source.organizeImports.biome": "explicit"
     }
   },
+  "cSpell.words": [
+    "openapi",
+    "googui",
+    "fastify"
+  ]
 }
