@@ -1,22 +1,18 @@
 import fastifySwagger from "@fastify/swagger";
-import fastifyScalar from "@scalar/fastify-api-reference";
+import fastifyPlugin from "fastify-plugin";
 
-/**
- *
- * @param {import("fastify").FastifyInstance} app
- */
-export async function openAPISpec(app) {
-  await app.register(fastifySwagger, {
+export const openapi = fastifyPlugin(async (app) => {
+  app.register(fastifySwagger, {
     openapi: {
       openapi: "3.1.0",
       info: {
         title: "Googui Maps",
-        description: "Testing the Fastify swagger API",
+        description: "OpenAPI specification for Googui Maps API",
         version: "1.0.0"
       },
       servers: [
         {
-          url: "http://localhost:3000",
+          url: "http://localhost:3333",
           description: "Development server"
         }
       ],
@@ -32,13 +28,4 @@ export async function openAPISpec(app) {
       }
     }
   });
-
-  await app.register(fastifyScalar, {
-    routePrefix: "/docs",
-    configuration: {
-      spec: {
-        content: () => app.swagger()
-      }
-    }
-  });
-}
+});
