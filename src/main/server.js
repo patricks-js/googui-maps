@@ -4,6 +4,7 @@ import { env } from "./config/env.js";
 import { cors } from "./middlewares/cors.js";
 import { openapi } from "./plugins/openapi.js";
 import { scalarUi } from "./plugins/scalar.js";
+import { mapRoutes } from "./routes/map.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
 
 const app = Fastify({
@@ -19,6 +20,7 @@ app.register(scalarUi);
 
 // * Routes
 app.register(userRoutes, { prefix: "/api/users" });
+app.register(mapRoutes, { prefix: "/api/maps" });
 
 // * Server
 const port = env.PORT || 3333;
