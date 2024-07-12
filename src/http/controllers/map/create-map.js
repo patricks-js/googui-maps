@@ -1,4 +1,4 @@
-import { createMap } from "../../../data/usecases/map/create-map.js";
+import { createMap } from "../../../data/usecases/maps/create-map.js";
 
 /**
  *
