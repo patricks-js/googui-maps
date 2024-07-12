@@ -1,22 +1,18 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const mapSchema = new Schema(
   {
-    name: String,
-    demessions: {
-      width: Number,
-      height: Number
+    name: { type: String, required: true },
+    dimensions: {
+      width: { type: Number, required: true },
+      height: { type: Number, required: true }
     },
     obstacles: [
       {
-        x: Number,
-        y: Number
-      },
-
-      {
-        x: Number,
-        y: Number
+        x: { type: Number, required: true },
+        y: { type: Number, required: true },
+        _id: false // This disables the automatic addition of _id for each obstacle
       }
     ]
   },
