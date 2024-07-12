@@ -4,7 +4,7 @@ export async function createMap(map) {
   const existingMap = await Maps.findOne({ name: map.name });
 
   if (!existingMap) {
-    return await Maps.create(map);
+    return Maps.create(map);
   }
 
   throw new Error("Map already exists");
