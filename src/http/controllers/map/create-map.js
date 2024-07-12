@@ -1,4 +1,14 @@
+import { z } from "zod";
 import { createMap } from "../../../data/usecases/maps/create-map.js";
+
+const mapSchema = z.object({
+  name: z.string(),
+  dimensions: z.object({
+    width: z.number(),
+    height: z.number()
+  }),
+  obstacles: z.array(z.object({ x: z.number(), y: z.number() }))
+});
 
 /**
  *
@@ -7,7 +17,9 @@ import { createMap } from "../../../data/usecases/maps/create-map.js";
  */
 export async function createMapControllers(request, reply) {
   try {
-    const newMap = await createMap(request.body);
+    const validatedMap = mapSchema.parse(request.body);
+    const newMap = await createMap(validatedMap);
+
     return reply.status(201).send(newMap);
   } catch (error) {
     reply.status(400).send(error);
