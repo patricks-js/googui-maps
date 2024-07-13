@@ -82,3 +82,49 @@ export const obstacleDeleteSchema = {
     }
   }
 };
+
+export const obstaclePutSchema = {
+  schema: {
+    tags: ["obstacle"],
+    response: {
+      200: {
+        description: "Obstacle updated successfully",
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          mapId: { type: "string" },
+          position: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          size: { type: "number" }
+        }
+      }
+    },
+    params: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string" }
+      }
+    },
+    body: {
+      type: "object",
+      required: ["mapId", "position", "size"],
+      properties: {
+        mapId: { type: "string" },
+        position: {
+          type: "object",
+          required: ["x", "y"],
+          properties: {
+            x: { type: "number" },
+            y: { type: "number" }
+          }
+        }
+      }
+    }
+  }
+};
