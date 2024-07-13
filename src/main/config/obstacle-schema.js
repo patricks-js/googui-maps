@@ -68,3 +68,17 @@ export const obstacleGetSchema = {
     }
   }
 };
+
+export const obstacleDeleteSchema = {
+  schema: {
+    tags: ["obstacle"],
+    response: { 204: {} },
+    params: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string" }
+      }
+    }
+  }
+};

@@ -1,6 +1,8 @@
 import { createObstacleController } from "../../http/controllers/obstacle/create-obstacle.js";
+import { deleteObstacleController } from "../../http/controllers/obstacle/delete-obstacle.js";
 import { findObstacleController } from "../../http/controllers/obstacle/find-obstacle.js";
 import {
+  obstacleDeleteSchema,
   obstacleGetSchema,
   obstaclePostSchema
 } from "../config/obstacle-schema.js";
@@ -11,4 +13,5 @@ import {
 export async function obstacleRoutes(app) {
   app.post("/", obstaclePostSchema, createObstacleController);
   app.get("/:id", obstacleGetSchema, findObstacleController);
+  app.delete("/:id", obstacleDeleteSchema, deleteObstacleController);
 }
