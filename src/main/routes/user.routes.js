@@ -1,4 +1,5 @@
 import { createUserController } from "../../http/controllers/user/create-user.js";
+import { deleteUserController } from "../../http/controllers/user/delete-user.js";
 
 /**
  *
@@ -6,4 +7,5 @@ import { createUserController } from "../../http/controllers/user/create-user.js
  */
 export async function userRoutes(app) {
   app.post("/", createUserController);
+  app.delete("/:id", deleteUserController);
 }
