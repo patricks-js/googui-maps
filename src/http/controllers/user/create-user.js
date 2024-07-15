@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { User } from "../../../data/models/user.js";
+import { createUser } from "../../../data/usecases/user/create-user.js";
 
 const userSchema = z.object({
   username: z.string(),
@@ -14,16 +14,10 @@ const userSchema = z.object({
 export async function createUserController(request, reply) {
   try {
     const data = userSchema.parse(request.body);
+    const createdUser = await createUser(data);
 
-    // const user = await User.findOne({ username });
-
-    // if (user) {
-    //   return user;
-    // }
-
-    const newUser = await User.create(data);
-    return reply.status(201).send(newUser);
+    return reply.status(201).send(createdUser);
   } catch (error) {
-    reply.status(500).send(error);
+    reply.status(400).send(error);
   }
 }
