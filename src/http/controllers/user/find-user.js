@@ -15,7 +15,7 @@ export async function findUserController(request, reply) {
     const { id } = paramsSchema.parse(request.params);
     const user = await findUser(id);
 
-    reply.status(204).send(user);
+    return reply.status(204).send(user);
   } catch (error) {
     reply.status(400).send(error);
   }
