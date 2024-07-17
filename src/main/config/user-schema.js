@@ -5,7 +5,6 @@ export const userPostSchema = {
       type: "object",
       required: ["username", "email"],
       properties: {
-        _id: { type: "string" },
         username: { type: "string" },
         email: { type: "string" }
       }
