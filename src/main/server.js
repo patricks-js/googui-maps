@@ -7,6 +7,7 @@ import { scalarUi } from "./plugins/scalar.js";
 import { mapRoutes } from "./routes/map.routes.js";
 import { obstacleRoutes } from "./routes/obstacle.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
+import { waypointsRoutes } from "./routes/waypoint.routes.js";
 
 const app = Fastify({
   logger: true
@@ -23,6 +24,7 @@ app.register(scalarUi);
 app.register(userRoutes, { prefix: "/api/users" });
 app.register(mapRoutes, { prefix: "/api/maps" });
 app.register(obstacleRoutes, { prefix: "/api/obstacles" });
+app.register(waypointsRoutes, { prefix: "/api/waypoints" });
 
 // * Server
 const port = env.PORT || 3333;
