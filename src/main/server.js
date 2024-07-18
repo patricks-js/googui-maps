@@ -6,6 +6,7 @@ import { openapi } from "./plugins/openapi.js";
 import { scalarUi } from "./plugins/scalar.js";
 import { mapRoutes } from "./routes/map.routes.js";
 import { obstacleRoutes } from "./routes/obstacle.routes.js";
+import { pathRoutes } from "./routes/path.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
 
 const app = Fastify({
@@ -24,6 +25,7 @@ app.register(userRoutes, { prefix: "/api/users" });
 app.register(mapRoutes, { prefix: "/api/maps" });
 app.register(obstacleRoutes, { prefix: "/api/obstacles" });
 
+app.register(pathRoutes, { prefix: "api/path" });
 // * Server
 const port = env.PORT || 3333;
 const host = "0.0.0.0";
