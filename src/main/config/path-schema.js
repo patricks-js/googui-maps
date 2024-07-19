@@ -50,48 +50,81 @@ export const pathPostSchema = {
 };
 
 export const pathGetSchema = {
-  tags: ["path"],
-  response: {
-    200: {
-      description: "Path retrieved successfully",
-      type: "object",
-      properties: {
-        _id: { type: "string" },
-        start: {
-          type: "object",
-          properties: {
-            x: { type: "number" },
-            y: { type: "number" }
-          }
-        },
-        end: {
-          type: "object",
-          properties: {
-            x: { type: "number" },
-            y: { type: "number" }
-          }
-        },
-        distance: { type: "number" }
+  schema: {
+    tags: ["path"],
+    response: {
+      200: {
+        description: "Path retrieved successfully",
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          start: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          end: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          distance: { type: "number" }
+        }
       }
-    }
-  },
-  params: {
-    type: "object",
-    required: ["id"],
-    properties: {
-      id: { type: "string" }
+    },
+    params: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string" }
+      }
     }
   }
 };
 
 export const pathPutSchema = {
-  tags: ["path"],
-  response: {
-    200: {
-      description: "Path updated successfully",
+  schema: {
+    tags: ["path"],
+    response: {
+      200: {
+        description: "Path updated successfully",
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          mapId: { type: "string" },
+          start: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          end: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          distance: { type: "number" }
+        }
+      }
+    },
+    params: {
       type: "object",
+      required: ["id"],
       properties: {
-        _id: { type: "string" },
+        id: { type: "string" }
+      }
+    },
+    body: {
+      type: "object",
+      required: ["mapId", "start", "end", "distance"],
+      properties: {
         mapId: { type: "string" },
         start: {
           type: "object",
@@ -110,41 +143,12 @@ export const pathPutSchema = {
         distance: { type: "number" }
       }
     }
-  },
-  params: {
-    type: "object",
-    required: ["id"],
-    properties: {
-      id: { type: "string" }
-    }
-  },
-  body: {
-    type: "object",
-    required: ["mapId", "start", "end", "distance"],
-    properties: {
-      mapId: { type: "string" },
-      start: {
-        type: "object",
-        properties: {
-          x: { type: "number" },
-          y: { type: "number" }
-        }
-      },
-      end: {
-        type: "object",
-        properties: {
-          x: { type: "number" },
-          y: { type: "number" }
-        }
-      },
-      distance: { type: "number" }
-    }
   }
 };
 
 export const deletePathSchema = {
   schema: {
-    tags: ["map"],
+    tags: ["path"],
     response: { 204: {} },
     params: {
       type: "object",
