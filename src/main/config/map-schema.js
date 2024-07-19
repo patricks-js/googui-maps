@@ -176,3 +176,25 @@ export const deleteMapSchema = {
     }
   }
 };
+
+export const checkMapConfiguration = {
+  schema: {
+    tags: ["map"],
+    response: {
+      200: {
+        description: "Map configuration checked successfully",
+        type: "object",
+        properties: {
+          message: { type: "string" }
+        }
+      }
+    },
+    body: {
+      type: "object",
+      required: ["map_id"],
+      properties: {
+        map_id: { type: "string" }
+      }
+    }
+  }
+};

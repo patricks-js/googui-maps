@@ -1,8 +1,10 @@
+import { checkMapController } from "../../http/controllers/map/check-map-config.js";
 import { createMapControllers } from "../../http/controllers/map/create-map.js";
 import { deleteMapController } from "../../http/controllers/map/delete-map.js";
 import { findMapByIdController } from "../../http/controllers/map/find-map.js";
 import { updateMapController } from "../../http/controllers/map/update-map.js";
 import {
+  checkMapConfiguration,
   deleteMapSchema,
   mapGetSchema,
   mapPostSchema,
@@ -17,4 +19,5 @@ export async function mapRoutes(app) {
   app.get("/:id", mapGetSchema, findMapByIdController);
   app.put("/:id", mapPutSchema, updateMapController); // Update map route can be added here if needed.
   app.delete("/:id", deleteMapSchema, deleteMapController);
+  app.post("/check", checkMapConfiguration, checkMapController);
 }
