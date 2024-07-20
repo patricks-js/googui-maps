@@ -16,7 +16,7 @@ export async function verifyMap(mapId, startPoint, destinationPoint) {
   }
 }
 
-function verifyIfPointExists(map, position) {
+export function verifyIfPointExists(map, position) {
   const isInWidithRange = map.dimensions.width >= position.x;
   const isInHeightRange = map.dimensions.height >= position.y;
   const isPositive = position.x > 0 && position.y > 0;

@@ -10,7 +10,6 @@ export async function checkMapConfiguration(mapId) {
   }
 
   return {
-    message:
-      "O mapa foi configurado corretamente com obstáculos e pontos de parada."
+    message: "The map is set up correctly with obstacles and stopping points."
   };
 }
