@@ -7,6 +7,7 @@ import { scalarUi } from "./plugins/scalar.js";
 import { mapRoutes } from "./routes/map.routes.js";
 import { obstacleRoutes } from "./routes/obstacle.routes.js";
 import { pathRoutes } from "./routes/path.routes.js";
+import { routeRoutes } from "./routes/route.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
 import { waypointsRoutes } from "./routes/waypoint.routes.js";
 
@@ -26,6 +27,7 @@ app.register(userRoutes, { prefix: "/api/users" });
 app.register(mapRoutes, { prefix: "/api/maps" });
 app.register(obstacleRoutes, { prefix: "/api/obstacles" });
 app.register(waypointsRoutes, { prefix: "/api/waypoints" });
+app.register(routeRoutes, { prefix: "/api/route" });
 
 app.register(pathRoutes, { prefix: "api/path" });
 // * Server
