@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from "../../../http/errors.js";
 import { Maps } from "../../models/map.js";
 import { verifyIfPointExists } from "../maps/verify-map.js";
 
@@ -7,7 +8,7 @@ async function findBestRoute(map, startPoint, endPoint) {
     !verifyIfPointExists(map, startPoint) ||
     !verifyIfPointExists(map, endPoint)
   ) {
-    throw new Error("Invalid map or points.");
+    throw new BadRequestError("Invalid map or points.");
   }
 
   const heuristic = (pointA, pointB) => {
@@ -66,7 +67,7 @@ async function findBestRoute(map, startPoint, endPoint) {
     }
   }
 
-  throw new Error("No path found");
+  throw new NotFoundError("No path found");
 }
 
 function reconstructPath(cameFrom, current) {

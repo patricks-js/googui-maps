@@ -1,15 +1,12 @@
+import { NotFoundError } from "../../../http/errors.js";
 import { Waypoint } from "../../models/waypoint.js";
 
 export async function findWaypoint(id) {
-  try {
-    const existingWaypoint = await Waypoint.findById(id);
+  const existingWaypoint = await Waypoint.findById(id);
 
-    if (!existingWaypoint) {
-      throw new Error("Waypoint not find");
-    }
-
-    return existingWaypoint;
-  } catch (error) {
-    throw new Error(error.message);
+  if (!existingWaypoint) {
+    throw new NotFoundError(`Waypoint with id ${id} not found`);
   }
+
+  return existingWaypoint;
 }
