@@ -28,7 +28,10 @@
     "@biomejs/biome": "1.8.3",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "lefthook": "^1.7.1"
+    "@vitest/coverage-istanbul": "^2.0.4",
+    "lefthook": "^1.7.1",
+    "supertest": "^7.0.0",
+    "vitest": "^2.0.4"
   },
   "keywords": [],
   "author": "",
