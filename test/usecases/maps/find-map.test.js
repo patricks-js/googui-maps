@@ -39,14 +39,11 @@ describe("findMapById", () => {
 
   it("should throw an error when the map is not found", async () => {
     const id = "123";
+    const errorMessage = `Couldn't find map with id: ${id}`;
 
-    Maps.findById.mockRejectedValue(
-      new Error(`Couldn't find map with id: ${id}`)
-    );
+    Maps.findById.mockRejectedValue(new Error(errorMessage));
 
-    await expect(findMapById(id)).rejects.toThrow(
-      `Couldn't find map with id: ${id}`
-    );
+    await expect(findMapById(id)).rejects.toThrow(errorMessage);
 
     expect(Maps.findById).toHaveBeenCalledWith(id);
   });

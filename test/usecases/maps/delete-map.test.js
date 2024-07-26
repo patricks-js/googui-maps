@@ -38,12 +38,11 @@ describe("deleteMap", () => {
 
   it("should throw an error when deletion fails", async () => {
     const id = "1234";
-    Maps.findByIdAndDelete.mockRejectedValue(
-      new Error("Error deleting map: Error: Deletion failed")
-    );
+    const errorMessage = "Error deleting map";
+    Maps.findByIdAndDelete.mockRejectedValue(new Error(errorMessage));
 
     await expect(deleteMap(id)).rejects.toThrow(
-      "Error deleting map: Error: Deletion failed"
+      `Error deleting map: ${errorMessage}`
     );
 
     expect(Maps.findByIdAndDelete).toHaveBeenCalledWith(id);

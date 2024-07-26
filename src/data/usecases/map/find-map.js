@@ -1,10 +1,9 @@
 import { Maps } from "../../models/map.js";
 
 export async function findMapById(id) {
-  console.log("id: ", id);
   try {
-    return Maps.findById(id);
-  } catch {
+    return await Maps.findById(id);
+  } catch (error) {
     throw new Error(`Couldn't find map with id: ${id}`);
   }
 }
