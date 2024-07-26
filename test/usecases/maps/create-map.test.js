@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createMap } from "../../../src/data/usecases/maps/create-map.js";
+import { createMap } from "../../../src/data/usecases/map/create-map.js";
 
 import { Maps } from "../../../src/data/models/map.js";
 

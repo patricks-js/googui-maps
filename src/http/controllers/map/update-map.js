@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { updateMap } from "../../../data/usecases/maps/update-map.js";
+import { updateMap } from "../../../data/usecases/map/update-map.js";
 
 const idMapSchema = z.object({ id: z.string() });
 

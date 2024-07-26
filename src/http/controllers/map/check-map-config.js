@@ -1,4 +1,4 @@
-import { checkMapConfiguration } from "../../../data/usecases/maps/check-map-config.js";
+import { checkMapConfiguration } from "../../../data/usecases/map/check-map-config.js";
 
 /**
  *

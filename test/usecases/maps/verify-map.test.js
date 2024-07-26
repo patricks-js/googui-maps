@@ -3,7 +3,7 @@ import { Maps } from "../../../src/data/models/map.js";
 import {
   verifyIfPointExists,
   verifyMap
-} from "../../../src/data/usecases/maps/verify-map.js";
+} from "../../../src/data/usecases/map/verify-map.js";
 
 vi.mock("../../../src/data/models/map.js", () => ({
   Maps: {

@@ -24,7 +24,7 @@ app.register(scalarUi);
 
 // * Routes
 app.register(userRoutes, { prefix: "/api/users" });
-app.register(mapRoutes, { prefix: "/api/maps" });
+app.register(mapRoutes, { prefix: "/api/map" });
 app.register(obstacleRoutes, { prefix: "/api/obstacles" });
 app.register(waypointsRoutes, { prefix: "/api/waypoints" });
 app.register(routeRoutes, { prefix: "/api/route" });
