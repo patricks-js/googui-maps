@@ -21,6 +21,8 @@ export async function updateObstacleController(request, response) {
 
     return response.status(200).send(updatedObstacle);
   } catch (error) {
-    throw new Error("Error updating obstacle: ", error);
+    response
+      .status(400)
+      .send({ message: "Error updating obstacle: ", error: error.message });
   }
 }
