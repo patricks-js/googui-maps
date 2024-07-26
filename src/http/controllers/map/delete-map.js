@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { deleteMap } from "../../../data/usecases/maps/delete-map.js";
+import { deleteMap } from "../../../data/usecases/map/delete-map.js";
 
 const mapSchema = z.object({
   id: z.string()

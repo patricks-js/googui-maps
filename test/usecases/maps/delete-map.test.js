@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Maps } from "../../../src/data/models/map.js";
-import { deleteMap } from "../../../src/data/usecases/maps/delete-map.js";
+import { deleteMap } from "../../../src/data/usecases/map/delete-map.js";
 
 vi.mock("../../../src/data/models/map.js", () => ({
   Maps: {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { verifyMap } from "../../../data/usecases/maps/verify-map.js";
+import { verifyMap } from "../../../data/usecases/map/verify-map.js";
 
 const mapSchema = z.object({
   map_id: z.string(),

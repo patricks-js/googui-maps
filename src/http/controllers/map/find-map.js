@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { findMapById } from "../../../data/usecases/maps/find-map.js";
+import { findMapById } from "../../../data/usecases/map/find-map.js";
 
 const mapSchema = z.object({
   id: z.string()

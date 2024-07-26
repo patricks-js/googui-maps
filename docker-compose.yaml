@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: bitnami/mongodb:latest
-    container_name: googui-maps-users-db
+    container_name: googui-map-users-db
     restart: always
     environment:
       MONGODB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}

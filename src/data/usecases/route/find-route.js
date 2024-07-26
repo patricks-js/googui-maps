@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from "../../../http/errors.js";
 import { Maps } from "../../models/map.js";
-import { verifyIfPointExists } from "../maps/verify-map.js";
+import { verifyIfPointExists } from "../map/verify-map.js";
 
 async function findBestRoute(map, startPoint, endPoint) {
   if (

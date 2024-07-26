@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { Maps } from "../../../src/data/models/map.js";
-import { findMapById } from "../../../src/data/usecases/maps/find-map.js";
+import { findMapById } from "../../../src/data/usecases/map/find-map.js";
 
 // Mock the `Maps` model methods
 vi.mock("../../../src/data/models/map.js", () => ({

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Obstacle } from "../../../src/data/models/obstacle.js";
 import { Waypoint } from "../../../src/data/models/waypoint.js";
-import { checkMapConfiguration } from "../../../src/data/usecases/maps/check-map-config.js";
+import { checkMapConfiguration } from "../../../src/data/usecases/map/check-map-config.js";
 
 vi.mock("../../../src/data/models/obstacle.js", () => ({
   Obstacle: {
