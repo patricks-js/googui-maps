@@ -46,9 +46,9 @@ describe("updateObstacleController", () => {
 
   it("should return 400 with validation error if the input data is invalid", async () => {
     const invalidData = {
-      mapId: 1234, // Invalid type for mapId
-      position: { x: "wrong", y: 20 }, // Invalid type for x
-      size: "big" // Invalid type for size
+      mapId: 1234,
+      position: { x: "wrong", y: 20 },
+      size: "big"
     };
 
     const request = mockRequest({ id: "1234" }, invalidData);
@@ -59,7 +59,6 @@ describe("updateObstacleController", () => {
     expect(updateObstacle).not.toHaveBeenCalled();
     expect(reply.status).toHaveBeenCalledWith(400);
 
-    // Ajustar a verificação para corresponder ao formato do erro de validação
     expect(reply.send).toHaveBeenCalledWith({
       message: "Error updating obstacle: ",
       error: expect.stringContaining("invalid_type")
