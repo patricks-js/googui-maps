@@ -37,7 +37,7 @@ describe("updatePathController", () => {
   });
 
   it("should return 400 status code if path ID validation fails", async () => {
-    const invalidId = ""; // Empty string should fail ID validation
+    const invalidId = "";
     const response = await fastify.inject({
       method: "PUT",
       url: `/path/${invalidId}`,
@@ -59,7 +59,7 @@ describe("updatePathController", () => {
     const invalidData = {
       mapId: "map123",
       start: { x: 1, y: 1 },
-      end: { x: 2, y: "invalid" }, // Invalid type for y
+      end: { x: 2, y: "invalid" },
       distance: 10
     };
 
