@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { updatePath } from "../../../data/usecases/path/update-path.js";
 
-const idPathSchema = z.object({ id: z.string() });
+const idPathSchema = z.object({ id: z.string().nonempty() });
 
 const pathSchema = z.object({
-  mapId: z.string(),
+  mapId: z.string().nonempty(),
   start: z.object({
     x: z.number(),
     y: z.number()
@@ -13,7 +13,7 @@ const pathSchema = z.object({
     x: z.number(),
     y: z.number()
   }),
-  distance: z.number()
+  distance: z.number().positive()
 });
 
 /**
@@ -29,6 +29,11 @@ export async function updatePathController(request, reply) {
     const updatedPath = await updatePath(request.params.id, request.body);
     return reply.status(200).send(updatedPath);
   } catch (error) {
-    reply.status(404).send(error);
+    if (error instanceof z.ZodError) {
+      return reply
+        .status(400)
+        .send({ error: "Bad Request", details: error.errors });
+    }
+    return reply.status(404).send({ error: "Not Found" });
   }
 }
