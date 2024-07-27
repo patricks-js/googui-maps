@@ -1,4 +1,4 @@
-import { Path } from "../../../data/models/path.js";
+import { Path } from "../../models/path.js";
 
 export async function deletePath(id) {
   try {
