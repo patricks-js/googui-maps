@@ -40,7 +40,8 @@ describe("updateMap", () => {
       ]
     };
 
-    Maps.findByIdAndUpdate.mockResolvedValue(updatedMap);
+    Maps.findById = vi.fn().mockResolvedValue(id);
+    Maps.findByIdAndUpdate = vi.fn().mockResolvedValue(updatedMap);
 
     const result = await updateMap(id, newMap);
 
@@ -63,10 +64,11 @@ describe("updateMap", () => {
         { x: 25, y: 25 }
       ]
     };
+    const errorMessage = "Error updating map";
 
-    Maps.findByIdAndUpdate.mockRejectedValue(new Error("Error updating map"));
+    Maps.findByIdAndUpdate.mockRejectedValue(new Error(errorMessage));
 
-    await expect(updateMap(id, newMap)).rejects.toThrow("Error updating map");
+    await expect(updateMap(id, newMap)).rejects.toThrow(errorMessage);
 
     expect(Maps.findByIdAndUpdate).toHaveBeenCalledWith(id, newMap, {
       new: true
