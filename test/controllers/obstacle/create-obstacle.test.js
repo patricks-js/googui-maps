@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { createObstacle } from "../../../src/data/usecases/obstacle/create-obstacle.js";
 import { createObstacleController } from "../../../src/http/controllers/obstacle/create-obstacle.js";
+import { BadRequestError } from "../../../src/http/errors.js";
 
 vi.mock("../../../src/data/usecases/obstacle/create-obstacle.js", () => ({
   createObstacle: vi.fn()
@@ -80,7 +81,7 @@ describe("createObstacleController", () => {
       size: 10
     };
 
-    const error = new Error("Error creating obstacle");
+    const error = new BadRequestError("Error creating obstacle");
     createObstacle.mockRejectedValue(error);
 
     const request = mockRequest(validObstacle);

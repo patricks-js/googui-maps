@@ -13,7 +13,7 @@ const obstacleSchema = z.object({
 
 /**
  * @param {import("fastify").FastifyRequest} request
- * @param {import("fastify").FastifyReply} response
+ * @param {import("fastify").FastifyReply} reply
  */
 export async function updateObstacleController(request, response) {
   const { id } = validators.idParamSchema(request.params);
