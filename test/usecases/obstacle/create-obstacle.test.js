@@ -47,7 +47,7 @@ describe("createObstacle", () => {
     Maps.findById.mockResolvedValue(null);
 
     await expect(createObstacle(obstacle)).rejects.toThrow(
-      "Error creating obstacle"
+      "Map not found for obstacle"
     );
 
     expect(Maps.findById).toHaveBeenCalledWith(obstacle.mapId);
