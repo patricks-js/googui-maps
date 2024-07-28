@@ -15,12 +15,8 @@ const obstacleSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function createObstacleController(request, reply) {
-  try {
-    obstacleSchema.parse(request.body);
-    const createdObstacle = await createObstacle(request.body);
+  obstacleSchema.parse(request.body);
+  const createdObstacle = await createObstacle(request.body);
 
-    return reply.status(201).send(createdObstacle);
-  } catch (error) {
-    reply.status(400).send(error);
-  }
+  return reply.status(201).send(createdObstacle);
 }

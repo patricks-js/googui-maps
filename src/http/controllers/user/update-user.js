@@ -16,13 +16,9 @@ const bodySchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function updateUserController(request, reply) {
-  try {
-    const { id } = paramsSchema.parse(request.params);
-    const changes = bodySchema.parse(request.body);
-    const user = await updateUser(id, changes);
+  const { id } = paramsSchema.parse(request.params);
+  const changes = bodySchema.parse(request.body);
+  const user = await updateUser(id, changes);
 
-    reply.status(204).send(user);
-  } catch (error) {
-    reply.status(400).send(error);
-  }
+  reply.status(204).send(user);
 }

@@ -8,10 +8,8 @@ const waypointSchema = new Schema(
       x: { type: Number, required: true },
       y: { type: Number, required: true }
     },
-
     name: { type: String, required: true }
   },
-
   { versionKey: false }
 );
 

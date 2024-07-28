@@ -176,3 +176,58 @@ export const deleteMapSchema = {
     }
   }
 };
+
+export const mapVerifySchema = {
+  schema: {
+    tags: ["map"],
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          description: {
+            type: "string",
+            description:
+              "Os pontos e o mapa são válidos e existem no banco de dados."
+          }
+        }
+      }
+    },
+    body: {
+      type: "object",
+      required: ["map_id", "start_point", "destination_point"],
+      properties: {
+        map_id: { type: "string" },
+        start_point: {
+          type: "object",
+          properties: { x: { type: "number" }, y: { type: "number" } }
+        },
+        destination_point: {
+          type: "object",
+          properties: { x: { type: "number" }, y: { type: "number" } }
+        }
+      }
+    }
+  }
+};
+
+export const checkMapConfiguration = {
+  schema: {
+    tags: ["map"],
+    response: {
+      200: {
+        description: "Map configuration checked successfully",
+        type: "object",
+        properties: {
+          message: { type: "string" }
+        }
+      }
+    },
+    body: {
+      type: "object",
+      required: ["map_id"],
+      properties: {
+        map_id: { type: "string" }
+      }
+    }
+  }
+};

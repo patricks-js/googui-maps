@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createMap } from "../../../data/usecases/maps/create-map.js";
+import { createMap } from "../../../data/usecases/map/create-map.js";
 
 const mapSchema = z.object({
   name: z.string(),

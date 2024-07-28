@@ -1,0 +1,58 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { Obstacle } from "../../../src/data/models/obstacle.js";
+import { updateObstacle } from "../../../src/data/usecases/obstacle/update-obstacle.js";
+
+vi.mock("../../../src/data/models/obstacle.js", () => ({
+  Obstacle: {
+    findByIdAndUpdate: vi.fn()
+  }
+}));
+
+describe("updateObstacle", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should update an existing obstacle", async () => {
+    const id = "1234";
+    const newObstacle = {
+      x: 30,
+      y: 40
+    };
+
+    const updatedObstacle = {
+      id: "1234",
+      x: 30,
+      y: 40
+    };
+
+    Obstacle.findByIdAndUpdate.mockResolvedValue(updatedObstacle);
+
+    const result = await updateObstacle(id, newObstacle);
+
+    expect(Obstacle.findByIdAndUpdate).toHaveBeenCalledWith(id, newObstacle, {
+      new: true
+    });
+    expect(result).toEqual(updatedObstacle);
+  });
+
+  it("should throw an error when the update fails", async () => {
+    const id = "1234";
+    const newObstacle = {
+      x: 30,
+      y: 40
+    };
+
+    Obstacle.findByIdAndUpdate.mockRejectedValue(
+      new Error("Error updating obstacle")
+    );
+
+    await expect(updateObstacle(id, newObstacle)).rejects.toThrow(
+      "Error updating obstacle"
+    );
+
+    expect(Obstacle.findByIdAndUpdate).toHaveBeenCalledWith(id, newObstacle, {
+      new: true
+    });
+  });
+});
