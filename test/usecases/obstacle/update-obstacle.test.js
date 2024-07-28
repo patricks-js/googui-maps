@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Obstacle } from "../../../src/data/models/obstacle.js";
 import { updateObstacle } from "../../../src/data/usecases/obstacle/update-obstacle.js";
+import { ServerError } from "../../../src/http/errors.js";
 
 vi.mock("../../../src/data/models/obstacle.js", () => ({
   Obstacle: {
@@ -26,13 +27,15 @@ describe("updateObstacle", () => {
       y: 40
     };
 
-    Obstacle.findByIdAndUpdate.mockResolvedValue(updatedObstacle);
+    Obstacle.findById = vi.fn().mockResolvedValue(id);
+    Obstacle.findByIdAndUpdate = vi.fn().mockResolvedValue(updatedObstacle);
 
     const result = await updateObstacle(id, newObstacle);
 
     expect(Obstacle.findByIdAndUpdate).toHaveBeenCalledWith(id, newObstacle, {
       new: true
     });
+
     expect(result).toEqual(updatedObstacle);
   });
 
@@ -43,9 +46,10 @@ describe("updateObstacle", () => {
       y: 40
     };
 
-    Obstacle.findByIdAndUpdate.mockRejectedValue(
-      new Error("Error updating obstacle")
-    );
+    Obstacle.findById = vi.fn().mockResolvedValue(id);
+    Obstacle.findByIdAndUpdate = vi
+      .fn()
+      .mockRejectedValue(new ServerError("Error updating obstacle"));
 
     await expect(updateObstacle(id, newObstacle)).rejects.toThrow(
       "Error updating obstacle"
