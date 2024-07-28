@@ -16,10 +16,24 @@ const obstacleSchema = z.object({
 
 /**
  * @param {import("fastify").FastifyRequest} request
- * @param {import("fastify").FastifyReply} response
+ * @param {import("fastify").FastifyReply} reply
  */
-export async function updateObstacleController(request, response) {
-  const { id } = paramsSchema.parse(request.params);
-  const data = obstacleSchema.parse(request.body);
-  return updateObstacle(id, data);
+export async function updateObstacleController(request, reply) {
+  try {
+    paramsSchema.parse(request.params);
+    obstacleSchema.parse(request.body);
+
+    const updatedObstacle = await updateObstacle(
+      request.params.id,
+      request.body
+    );
+    return reply.status(200).send(updatedObstacle);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return reply
+        .status(400)
+        .send({ error: "Bad Request", message: error.errors });
+    }
+    return reply.status(404).send(error);
+  }
 }
