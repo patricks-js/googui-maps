@@ -8,7 +8,7 @@ export async function updateObstacle(id, newObstacle) {
   }
 
   try {
-    return Obstacle.findByIdAndUpdate(id, newObstacle, { new: true });
+    return await Obstacle.findByIdAndUpdate(id, newObstacle, { new: true });
   } catch (error) {
     throw new ServerError("Error updating obstacle");
   }

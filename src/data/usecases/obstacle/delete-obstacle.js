@@ -9,7 +9,7 @@ export async function deleteObstacle(id) {
   }
 
   try {
-    return Obstacle.findByIdAndDelete(id);
+    return await Obstacle.findByIdAndDelete(id);
   } catch (error) {
     throw new ServerError("Error deleting obstacle");
   }
