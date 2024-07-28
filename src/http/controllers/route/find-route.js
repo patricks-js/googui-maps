@@ -20,13 +20,9 @@ const routeSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function findRouteController(request, reply) {
-  try {
-    routeSchema.parse(request.body);
-    const inputJSON = request.body;
-    const result = await findBestRouteFromJSON(inputJSON);
+  routeSchema.parse(request.body);
+  const inputJSON = request.body;
+  const result = await findBestRouteFromJSON(inputJSON);
 
-    return reply.status(200).send(result);
-  } catch (error) {
-    return reply.status(400).send({ error: error.message });
-  }
+  return reply.status(200).send(result);
 }

@@ -12,12 +12,8 @@ const waypointSchema = z.object({
  */
 
 export function deleteWaypointController(request, reply) {
-  try {
-    waypointSchema.parse(request.params);
+  waypointSchema.parse(request.params);
 
-    deleteWaypoint(request.params.id);
-    return reply.status(204).send();
-  } catch (error) {
-    reply.status(404).send(error);
-  }
+  deleteWaypoint(request.params.id);
+  return reply.status(204).send();
 }
