@@ -64,9 +64,9 @@ describe("updateMap", () => {
       ]
     };
 
-    Maps.findByIdAndUpdate.mockRejectedValue(new Error("Error update map"));
+    Maps.findByIdAndUpdate.mockRejectedValue(new Error("Error updating map"));
 
-    await expect(updateMap(id, newMap)).rejects.toThrow("Error update map");
+    await expect(updateMap(id, newMap)).rejects.toThrow("Error updating map");
 
     expect(Maps.findByIdAndUpdate).toHaveBeenCalledWith(id, newMap, {
       new: true

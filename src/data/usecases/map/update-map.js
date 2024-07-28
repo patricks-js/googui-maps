@@ -8,7 +8,7 @@ export async function updateMap(id, newMap) {
   }
 
   try {
-    return Maps.findByIdAndUpdate(id, newMap, { new: true });
+    return await Maps.findByIdAndUpdate(id, newMap, { new: true });
   } catch (error) {
     throw new ServerError("Error updating map");
   }

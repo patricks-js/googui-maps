@@ -1,12 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
-import { checkMapConfiguration } from "../../../src/data/usecases/map/check-map-config.js";
-import { checkMapController } from "../../../src/http/controllers/map/check-map-config.js";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
+import { createMap } from "../../../src/data/usecases/map/create-map.js";
+import { createMapControllers } from "../../../src/http/controllers/map/create-map.js";
 
-vi.mock("../../../src/data/usecases/map/check-map-config.js", () => ({
-  checkMapConfiguration: vi.fn()
+vi.mock("../../../src/data/usecases/map/create-map.js", () => ({
+  createMap: vi.fn()
 }));
 
-describe("checkMapController", () => {
+describe("createMapControllers", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   const mockRequest = (body) => ({
     body
   });
@@ -18,53 +23,82 @@ describe("checkMapController", () => {
     return reply;
   };
 
-  it("should return 200 with a success message if map is correctly configured", async () => {
-    const mapId = "1234";
-    const result = {
-      message: "The map is set up correctly with obstacles and stopping points."
+  it("should return 201 when a new map is successfully created", async () => {
+    const validMap = {
+      name: "New Map",
+      dimensions: {
+        width: 100,
+        height: 100
+      },
+      obstacles: [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 }
+      ]
     };
 
-    checkMapConfiguration.mockResolvedValue(result);
+    const createdMap = {
+      id: "5678",
+      ...validMap
+    };
 
-    const request = mockRequest({ map_id: mapId });
+    createMap.mockResolvedValue(createdMap);
+
+    const request = mockRequest(validMap);
     const reply = mockReply();
 
-    await checkMapController(request, reply);
+    await createMapControllers(request, reply);
 
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(200);
-    expect(reply.send).toHaveBeenCalledWith(result);
+    expect(createMap).toHaveBeenCalledWith(validMap);
+    expect(reply.status).toHaveBeenCalledWith(201);
+    expect(reply.send).toHaveBeenCalledWith(createdMap);
   });
 
-  it("should return 404 with an error message if map is not correctly configured", async () => {
-    const mapId = "1234";
-    const errorMessage = "Map is not configured with obstacles or waypoints";
+  it("should return 400 with validation error if the input data is invalid", async () => {
+    const invalidMap = {
+      name: "New Map",
+      dimensions: {
+        width: "not-a-number", // Invalid type
+        height: 100
+      },
+      obstacles: [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 }
+      ]
+    };
 
-    checkMapConfiguration.mockRejectedValue(new Error(errorMessage));
-
-    const request = mockRequest({ map_id: mapId });
+    const request = mockRequest(invalidMap);
     const reply = mockReply();
 
-    await checkMapController(request, reply);
+    await createMapControllers(request, reply);
 
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith({ error: errorMessage });
+    expect(createMap).not.toHaveBeenCalled();
+    expect(reply.status).toHaveBeenCalledWith(400);
+    expect(reply.send).toHaveBeenCalledWith(expect.any(z.ZodError));
   });
 
-  it("should return 404 with an error message if map is not found", async () => {
-    const mapId = "1234";
-    const errorMessage = "Map not found";
+  it("should return 400 with an error message if the map creation fails", async () => {
+    const validMap = {
+      name: "New Map",
+      dimensions: {
+        width: 100,
+        height: 100
+      },
+      obstacles: [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 }
+      ]
+    };
 
-    checkMapConfiguration.mockRejectedValue(new Error(errorMessage));
+    const error = new Error("Error creating map");
+    createMap.mockRejectedValue(error);
 
-    const request = mockRequest({ map_id: mapId });
+    const request = mockRequest(validMap);
     const reply = mockReply();
 
-    await checkMapController(request, reply);
+    await createMapControllers(request, reply);
 
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith({ error: errorMessage });
+    expect(createMap).toHaveBeenCalledWith(validMap);
+    expect(reply.status).toHaveBeenCalledWith(400);
+    expect(reply.send).toHaveBeenCalledWith(error);
   });
 });
