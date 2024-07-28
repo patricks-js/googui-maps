@@ -16,12 +16,8 @@ const waypointSchema = z.object({
  */
 
 export async function createWaypointController(request, reply) {
-  try {
-    const validatedWaypoint = waypointSchema.parse(request.body);
-    const newWaypoint = await createWaypoint(validatedWaypoint);
+  const validatedWaypoint = waypointSchema.parse(request.body);
+  const newWaypoint = await createWaypoint(validatedWaypoint);
 
-    return reply.status(201).send(newWaypoint);
-  } catch (error) {
-    reply.status(400).send(error);
-  }
+  return reply.status(201).send(newWaypoint);
 }

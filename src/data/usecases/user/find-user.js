@@ -1,15 +1,12 @@
+import { NotFoundError } from "../../../http/errors.js";
 import { User } from "../../models/user.js";
 
 export async function findUser(id) {
-  try {
-    const userExists = await User.findById(id);
+  const userExists = await User.findById(id);
 
-    if (!userExists) {
-      throw new Error("User not found.");
-    }
-
-    return userExists;
-  } catch (error) {
-    throw new Error(error.message);
+  if (!userExists) {
+    throw new NotFoundError(`User with id ${id} not found`);
   }
+
+  return userExists;
 }

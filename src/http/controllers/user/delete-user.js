@@ -11,12 +11,8 @@ const paramsSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function deleteUserController(request, reply) {
-  try {
-    const { id } = paramsSchema.parse(request.params);
-    await deleteUser(id);
+  const { id } = paramsSchema.parse(request.params);
+  await deleteUser(id);
 
-    reply.status(204);
-  } catch (error) {
-    reply.status(400).send(error);
-  }
+  reply.status(204);
 }

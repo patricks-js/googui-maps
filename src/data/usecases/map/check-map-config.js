@@ -1,3 +1,4 @@
+import { BadRequestError } from "../../../http/errors.js";
 import { Obstacle } from "../../models/obstacle.js";
 import { Waypoint } from "../../models/waypoint.js";
 
@@ -6,7 +7,9 @@ export async function checkMapConfiguration(mapId) {
   const waypoints = await Waypoint.find({ mapId });
 
   if (!obstacles.length || !waypoints.length) {
-    throw new Error("Map is not configured with obstacles or waypoints");
+    throw new BadRequestError(
+      "Map is not configured with obstacles or waypoints"
+    );
   }
 
   return {
