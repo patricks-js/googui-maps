@@ -33,9 +33,7 @@ describe("createPath", () => {
   it("should throw an error if an overlapping path exists", async () => {
     Path.findOne.mockResolvedValue(mockPath);
 
-    await expect(createPath(mockPath)).rejects.toThrow(
-      "Error creating new path."
-    );
+    await expect(createPath(mockPath)).rejects.toThrow("Path overlapping.");
 
     expect(Path.findOne).toHaveBeenCalledWith({
       distance: mockPath.distance,

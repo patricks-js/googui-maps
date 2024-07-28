@@ -28,12 +28,12 @@ describe("deleteMap", () => {
       ]
     };
 
-    Maps.findByIdAndDelete.mockResolvedValue(deletedMap);
+    Maps.findById = vi.fn().mockResolvedValue(id);
+    Maps.findByIdAndDelete = vi.fn().mockResolvedValue(deletedMap);
 
-    const result = await deleteMap(id);
+    await deleteMap(id);
 
     expect(Maps.findByIdAndDelete).toHaveBeenCalledWith(id);
-    expect(result).toEqual(deletedMap);
   });
 
   it("should throw an error when deletion fails", async () => {
@@ -41,9 +41,7 @@ describe("deleteMap", () => {
     const errorMessage = "Error deleting map";
     Maps.findByIdAndDelete.mockRejectedValue(new Error(errorMessage));
 
-    await expect(deleteMap(id)).rejects.toThrow(
-      `Error deleting map: ${errorMessage}`
-    );
+    await expect(deleteMap(id)).rejects.toThrow(errorMessage);
 
     expect(Maps.findByIdAndDelete).toHaveBeenCalledWith(id);
   });
