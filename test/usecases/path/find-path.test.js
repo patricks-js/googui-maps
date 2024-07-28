@@ -28,16 +28,16 @@ describe("findPath", () => {
   it("should throw an error if the path does not exist", async () => {
     Path.findById = vi.fn().mockResolvedValue(null);
 
-    await expect(findPath(mockPath._id)).rejects.toThrow("Error finding path");
+    await expect(findPath(mockPath._id)).rejects.toThrow("Path not found");
 
     expect(Path.findById).toHaveBeenCalledWith(mockPath._id);
   });
 
   it("should throw an error if finding the path fails", async () => {
-    const errorMessage = "Finding error";
+    const errorMessage = "Error finding path";
     Path.findById = vi.fn().mockRejectedValue(new Error(errorMessage));
 
-    await expect(findPath(mockPath._id)).rejects.toThrow("Error finding path");
+    await expect(findPath(mockPath._id)).rejects.toThrow(errorMessage);
 
     expect(Path.findById).toHaveBeenCalledWith(mockPath._id);
   });
