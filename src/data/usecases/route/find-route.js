@@ -117,5 +117,5 @@ export async function findBestRouteFromJSON(inputJSON) {
   const { map_id, start_point, end_point } = inputJSON;
   const map = await Maps.findById(map_id);
 
-  return await findBestRoute(map, start_point, end_point);
+  return findBestRoute(map, start_point, end_point);
 }
