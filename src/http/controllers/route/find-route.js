@@ -7,7 +7,12 @@ const routeSchema = z.object({
     x: z.number(),
     y: z.number()
   }),
-
+  stop_points: z.array(
+    z.object({
+      x: z.number(),
+      y: z.number()
+    })
+  ),
   end_point: z.object({
     x: z.number(),
     y: z.number()
@@ -20,9 +25,6 @@ const routeSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function findRouteController(request, reply) {
-  routeSchema.parse(request.body);
-  const inputJSON = request.body;
-  const result = await findBestRouteFromJSON(inputJSON);
-
-  return reply.status(200).send(result);
+  const body = routeSchema.parse(request.body);
+  return findBestRouteFromJSON(body);
 }

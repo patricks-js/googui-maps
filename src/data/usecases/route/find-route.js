@@ -2,7 +2,7 @@ import { BadRequestError, NotFoundError } from "../../../http/errors.js";
 import { Maps } from "../../models/map.js";
 import { verifyIfPointExists } from "../map/verify-map.js";
 
-async function findBestRoute(map, startPoint, endPoint) {
+async function findBestRoute(map, startPoint, endPoint, stopPoints) {
   if (
     !map ||
     !verifyIfPointExists(map, startPoint) ||
@@ -11,6 +11,22 @@ async function findBestRoute(map, startPoint, endPoint) {
     throw new BadRequestError("Invalid map or points.");
   }
 
+  const allPoints = [startPoint, ...stopPoints, endPoint];
+  let fullPath = [];
+
+  for (let i = 0; i < allPoints.length - 1; i++) {
+    const segmentStart = allPoints[i];
+    const segmentEnd = allPoints[i + 1];
+    const segmentPath = await findRouteSegment(map, segmentStart, segmentEnd);
+    fullPath = fullPath.concat(segmentPath.slice(0, -1)); // Avoid duplicating the end points
+  }
+
+  fullPath.push(endPoint); // Add the final end point
+
+  return { optimal_path: fullPath };
+}
+
+async function findRouteSegment(map, startPoint, endPoint) {
   const heuristic = (pointA, pointB) => {
     return Math.abs(pointA.x - pointB.x) + Math.abs(pointA.y - pointB.y);
   };
@@ -37,7 +53,7 @@ async function findBestRoute(map, startPoint, endPoint) {
     const current = JSON.parse(currentStr);
 
     if (current.x === endPoint.x && current.y === endPoint.y) {
-      return { optimal_path: reconstructPath(cameFrom, current) };
+      return reconstructPath(cameFrom, current);
     }
 
     openSet.delete(currentStr);
@@ -85,14 +101,14 @@ function reconstructPath(cameFrom, current) {
 function getNeighbors(map, point) {
   const neighbors = [];
   const directions = [
-    { x: 1, y: 0 }, //right
-    { x: -1, y: 0 }, //left
+    { x: 1, y: 0 }, // right
+    { x: -1, y: 0 }, // left
     { x: 0, y: 1 }, // up
     { x: 0, y: -1 }, // down
-    { x: 1, y: 1 }, //right up diagonal
-    { x: 1, y: -1 }, //right down diagonal
-    { x: -1, y: 1 }, //left up diagonal
-    { x: -1, y: -1 } //left down diagonal
+    { x: 1, y: 1 }, // right up diagonal
+    { x: 1, y: -1 }, // right down diagonal
+    { x: -1, y: 1 }, // left up diagonal
+    { x: -1, y: -1 } // left down diagonal
   ];
   for (const dir of directions) {
     const neighbor = { x: point.x + dir.x, y: point.y + dir.y };
@@ -114,8 +130,8 @@ function isObstacle(map, point) {
 }
 
 export async function findBestRouteFromJSON(inputJSON) {
-  const { map_id, start_point, end_point } = inputJSON;
-  const map = await Maps.findById(map_id);
+  const { start_point, end_point, stop_points, mapId } = inputJSON;
+  const map = await Maps.findById(mapId);
 
-  return await findBestRoute(map, start_point, end_point);
+  return await findBestRoute(map, start_point, end_point, stop_points);
 }
