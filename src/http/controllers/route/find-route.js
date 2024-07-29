@@ -8,7 +8,12 @@ const routeSchema = z.object({
     x: z.number(),
     y: z.number()
   }),
-
+  stop_points: z.array(
+    z.object({
+      x: z.number(),
+      y: z.number()
+    })
+  ),
   end_point: z.object({
     x: z.number(),
     y: z.number()
