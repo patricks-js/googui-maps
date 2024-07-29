@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Node } from "../../../data/models/node.js";
 import { findBestRouteFromJSON } from "../../../data/usecases/route/find-route.js";
 
 const routeSchema = z.object({
@@ -23,6 +24,8 @@ export async function findRouteController(request, reply) {
   routeSchema.parse(request.body);
   const inputJSON = request.body;
   const result = await findBestRouteFromJSON(inputJSON);
-
-  return reply.status(200).send(result);
+  Node.create(result);
+  return reply.status(200).send({
+    message: " Os pontos e o mapa são válidos e existem no banco de dados."
+  });
 }
