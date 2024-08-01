@@ -13,7 +13,7 @@ const bodySchema = z.object({
     x: z.number(),
     y: z.number()
   }),
-  distance: z.number()
+  distance: z.number().positive()
 });
 
 /**
