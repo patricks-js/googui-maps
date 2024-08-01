@@ -1,15 +1,15 @@
+import { NotFoundError, ServerError } from "../../../http/errors.js";
 import { Waypoint } from "../../models/waypoint.js";
 
 export async function deleteWaypoint(id) {
+  const waypoint = await Waypoint.findById(id);
+  if (!waypoint) {
+    throw new NotFoundError(`Waypoint with id ${id} not found`);
+  }
+
   try {
-    const result = await Waypoint.findByIdAndDelete(id);
-
-    if (!result) {
-      throw new Error("Waypoint not found");
-    }
-
-    return result;
+    await Waypoint.findByIdAndDelete(id);
   } catch (error) {
-    throw new Error(`Error at deleting Waypoint: ${error.message}`);
+    throw new ServerError("Error at deleting Waypoint");
   }
 }

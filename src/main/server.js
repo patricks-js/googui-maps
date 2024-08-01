@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import mongoose from "mongoose";
 import { env } from "./config/env.js";
 import { cors } from "./middlewares/cors.js";
+import { errorHandler } from "./middlewares/error-handler.js";
 import { openapi } from "./plugins/openapi.js";
 import { scalarUi } from "./plugins/scalar.js";
 import { mapRoutes } from "./routes/map.routes.js";
@@ -28,8 +29,11 @@ app.register(mapRoutes, { prefix: "/api/map" });
 app.register(obstacleRoutes, { prefix: "/api/obstacles" });
 app.register(waypointsRoutes, { prefix: "/api/waypoints" });
 app.register(routeRoutes, { prefix: "/api/route" });
-
 app.register(pathRoutes, { prefix: "api/path" });
+
+// * Error Handler
+app.setErrorHandler(errorHandler);
+
 // * Server
 const port = env.PORT || 3333;
 const host = "0.0.0.0";

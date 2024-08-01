@@ -1,13 +1,15 @@
-import { Path } from "../../models/path.js";
+import { Path } from "../../../data/models/path.js";
+import { NotFoundError, ServerError } from "../../../http/errors.js";
 
 export async function deletePath(id) {
+  const path = await Path.findById(id);
+  if (!path) {
+    throw new NotFoundError(`Path with id ${id} not found`);
+  }
+
   try {
-    const path = await Path.findByIdAndDelete(id);
-    if (!path) {
-      throw new Error("Path not found");
-    }
-    return path;
+    await Path.findByIdAndDelete(id);
   } catch (error) {
-    throw new Error("Error deleting path");
+    throw new ServerError("Error deleting path");
   }
 }

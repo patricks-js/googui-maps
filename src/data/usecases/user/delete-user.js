@@ -1,15 +1,16 @@
+import { NotFoundError, ServerError } from "../../../http/errors.js";
 import { User } from "../../models/user.js";
 
 export async function deleteUser(id) {
+  const userExists = await User.findById(id);
+
+  if (!userExists) {
+    throw new NotFoundError(`User with id ${id} not found`);
+  }
+
   try {
-    const userExists = await User.findById(id);
-
-    if (!userExists) {
-      throw new Error("User not found.");
-    }
-
     await User.findByIdAndDelete(id);
   } catch (error) {
-    throw new Error(error.message);
+    throw new ServerError(error.message);
   }
 }

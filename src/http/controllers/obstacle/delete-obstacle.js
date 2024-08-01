@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { deleteObstacle } from "../../../data/usecases/obstacle/delete-obstacle.js";
 
-const obstacleSchema = z.object({
+const paramsSchema = z.object({
   id: z.string()
 });
 /**
@@ -9,12 +9,8 @@ const obstacleSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function deleteObstacleController(request, reply) {
-  try {
-    obstacleSchema.parse(request.params);
-    await deleteObstacle(request.params.id);
+  const { id } = paramsSchema.parse(request.params);
+  await deleteObstacle(id);
 
-    reply.status(204).send();
-  } catch (error) {
-    reply.status(404).send(error);
-  }
+  reply.status(204).send();
 }
