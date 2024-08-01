@@ -8,7 +8,7 @@ import {
   pathGetSchema,
   pathPostSchema,
   pathPutSchema
-} from "../config/path-schema.js";
+} from "../config/schemas/path-schema.js";
 
 /**
  *

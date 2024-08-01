@@ -11,7 +11,7 @@ import {
   mapPostSchema,
   mapPutSchema,
   mapVerifySchema
-} from "../config/map-schema.js";
+} from "../config/schemas/map-schema.js";
 /**
  *
  * @param {import("fastify").FastifyInstance} app

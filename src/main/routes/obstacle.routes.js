@@ -7,7 +7,7 @@ import {
   obstacleGetSchema,
   obstaclePostSchema,
   obstaclePutSchema
-} from "../config/obstacle-schema.js";
+} from "../config/schemas/obstacle-schema.js";
 /**
  *
  * @param {import("fastify").FastifyInstance} app
