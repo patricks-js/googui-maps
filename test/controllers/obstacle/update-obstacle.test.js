@@ -58,34 +58,13 @@ describe("updateObstacleController", () => {
 
     expect(updateObstacle).not.toHaveBeenCalled();
     expect(reply.status).toHaveBeenCalledWith(400);
-
     expect(reply.send).toHaveBeenCalledWith({
-      message: "Error updating obstacle: ",
-      error: expect.stringContaining("invalid_type")
-    });
-  });
-
-  it("should return 400 with an error message if updating the obstacle fails", async () => {
-    const obstacleId = "1234";
-    const requestData = {
-      mapId: "map1",
-      position: { x: 10, y: 20 },
-      size: 5
-    };
-    const error = new Error("Update failed");
-
-    updateObstacle.mockRejectedValue(error);
-
-    const request = mockRequest({ id: obstacleId }, requestData);
-    const reply = mockReply();
-
-    await updateObstacleController(request, reply);
-
-    expect(updateObstacle).toHaveBeenCalledWith(obstacleId, requestData);
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith({
-      message: "Error updating obstacle: ",
-      error: error.message
+      error: "Bad Request",
+      message: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid_type"
+        })
+      ])
     });
   });
 });

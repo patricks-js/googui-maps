@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { deleteObstacle } from "../../../src/data/usecases/obstacle/delete-obstacle.js";
 import { deleteObstacleController } from "../../../src/http/controllers/obstacle/delete-obstacle.js";
+import { BadRequestError } from "../../../src/http/errors.js";
 
 vi.mock("../../../src/data/usecases/obstacle/delete-obstacle.js", () => ({
   deleteObstacle: vi.fn()
@@ -40,7 +41,7 @@ describe("deleteObstacleController", () => {
 
   it("should return 404 with error message if the obstacle is not found", async () => {
     const invalidId = "9999";
-    const error = new Error("Error deleting obstacle with id: 9999");
+    const error = new BadRequestError("Error deleting obstacle with id: 9999");
 
     deleteObstacle.mockRejectedValue(error);
 
