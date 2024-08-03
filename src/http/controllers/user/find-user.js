@@ -1,9 +1,5 @@
-import { z } from "zod";
 import { findUser } from "../../../data/usecases/user/find-user.js";
-
-const paramsSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  *
@@ -11,6 +7,7 @@ const paramsSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function findUserController(request, reply) {
-  const { id } = paramsSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
+
   return findUser(id);
 }

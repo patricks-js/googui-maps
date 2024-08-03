@@ -1,9 +1,5 @@
-import { z } from "zod";
 import { findWaypoint } from "../../../data/usecases/waypoint/find-waypoint.js";
-
-const waypointSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  *
@@ -12,6 +8,7 @@ const waypointSchema = z.object({
  */
 
 export async function findWaypointController(request, reply) {
-  const { id } = waypointSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
+
   return findWaypoint(id);
 }

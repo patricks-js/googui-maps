@@ -1,26 +1,12 @@
-import { z } from "zod";
 import { findObstacle } from "../../../data/usecases/obstacle/find-obstacle.js";
-
-const paramsSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  * @param {import("fastify").FastifyRequest} request
  * @param {import("fastify").FastifyReply} reply
  */
-export async function findObstacleController(request, reply) {
-  try {
-    paramsSchema.parse(request.params);
-    const obstacle = await findObstacle(request.params.id);
+export async function findObstacleController(request, response) {
+  const { id } = validators.idParamSchema(request.params);
 
-    return reply.status(200).send(obstacle);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return reply
-        .status(400)
-        .send({ error: "Bad Request", message: error.errors });
-    }
-    return reply.status(404).send(error);
-  }
+  return findObstacle(id);
 }

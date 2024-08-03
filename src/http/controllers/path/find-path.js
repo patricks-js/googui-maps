@@ -1,15 +1,12 @@
-import { z } from "zod";
 import { findPath } from "../../../data/usecases/path/find-path.js";
-
-const paramsSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  * @param {import("fastify").FastifyRequest} request
  * @param {import("fastify").FastifyReply} reply
  */
 export async function findPathController(request, reply) {
-  const { id } = paramsSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
+
   return findPath(id);
 }

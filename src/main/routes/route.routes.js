@@ -1,5 +1,5 @@
 import { findRouteController } from "../../http/controllers/route/find-route.js";
-import { findRouteSchema } from "../config/route-schema.js";
+import { findRouteSchema } from "../config/schemas/route-schema.js";
 
 /**
  *

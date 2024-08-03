@@ -1,9 +1,5 @@
-import { z } from "zod";
 import { deleteUser } from "../../../data/usecases/user/delete-user.js";
-
-const paramsSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  *
@@ -11,7 +7,7 @@ const paramsSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function deleteUserController(request, reply) {
-  const { id } = paramsSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
   await deleteUser(id);
 
   reply.status(204);

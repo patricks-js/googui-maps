@@ -7,7 +7,7 @@ import {
   waypointGetSchema,
   waypointPostSchema,
   waypointPutSchema
-} from "../config/waypoint-schema.js";
+} from "../config/schemas/waypoint-schema.js";
 
 /**
  *

@@ -7,7 +7,7 @@ import {
   userGetSchema,
   userPostSchema,
   userPutSchema
-} from "../config/user-schema.js";
+} from "../config/schemas/user-schema.js";
 
 /**
  *
