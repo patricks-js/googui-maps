@@ -2,7 +2,7 @@ import { BadRequestError, NotFoundError } from "../../../http/errors.js";
 import { Maps } from "../../models/map.js";
 import { verifyIfPointExists } from "../map/verify-map.js";
 
-async function findBestRoute(map, startPoint, endPoint, stopPoints) {
+async function findBestRoute(map, startPoint, endPoint, stopPoints = []) {
   if (
     !map ||
     !verifyIfPointExists(map, startPoint) ||
@@ -89,11 +89,9 @@ async function findRouteSegment(map, startPoint, endPoint) {
 function reconstructPath(cameFrom, current) {
   const totalPath = [current];
   let currentStr = JSON.stringify(current);
-  let currentPath = current;
   while (cameFrom.has(currentStr)) {
-    currentPath = cameFrom.get(currentStr);
-    currentStr = JSON.stringify(currentPath);
-    totalPath.unshift(currentPath);
+    currentStr = JSON.stringify(cameFrom.get(currentStr));
+    totalPath.unshift(current);
   }
   return totalPath;
 }
@@ -104,11 +102,7 @@ function getNeighbors(map, point) {
     { x: 1, y: 0 }, // right
     { x: -1, y: 0 }, // left
     { x: 0, y: 1 }, // up
-    { x: 0, y: -1 }, // down
-    { x: 1, y: 1 }, // right up diagonal
-    { x: 1, y: -1 }, // right down diagonal
-    { x: -1, y: 1 }, // left up diagonal
-    { x: -1, y: -1 } // left down diagonal
+    { x: 0, y: -1 } // down
   ];
   for (const dir of directions) {
     const neighbor = { x: point.x + dir.x, y: point.y + dir.y };
@@ -133,5 +127,9 @@ export async function findBestRouteFromJSON(inputJSON) {
   const { start_point, end_point, stop_points, mapId } = inputJSON;
   const map = await Maps.findById(mapId);
 
-  return findBestRoute(map, start_point, end_point);
+  if (!map) {
+    throw new BadRequestError("Invalid map or points.");
+  }
+
+  return findBestRoute(map, start_point, end_point, stop_points);
 }

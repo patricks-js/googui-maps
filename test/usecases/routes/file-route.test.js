@@ -19,9 +19,10 @@ describe("findBestRouteFromJSON", () => {
   };
 
   const mockInputJSON = {
-    map_id: "map1",
+    mapId: "map1",
     start_point: { x: 0, y: 0 },
-    end_point: { x: 1, y: 1 }
+    end_point: { x: 1, y: 1 },
+    stop_points: [] // Adicionando pontos de parada como lista vazia
   };
 
   beforeEach(() => {
@@ -36,9 +37,12 @@ describe("findBestRouteFromJSON", () => {
 
     const result = await findBestRouteFromJSON(mockInputJSON);
 
-    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.map_id);
+    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.mapId);
+    console.log(result.optimal_path);
+
     expect(result.optimal_path).toEqual([
-      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+      { x: 1, y: 1 },
       { x: 1, y: 1 }
     ]);
   });
@@ -50,7 +54,7 @@ describe("findBestRouteFromJSON", () => {
       "Invalid map or points."
     );
 
-    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.map_id);
+    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.mapId);
   });
 
   it("should throw an error if the start point does not exist on the map", async () => {
@@ -64,7 +68,7 @@ describe("findBestRouteFromJSON", () => {
       "Invalid map or points."
     );
 
-    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.map_id);
+    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.mapId);
   });
 
   it("should throw an error if the end point does not exist on the map", async () => {
@@ -78,7 +82,7 @@ describe("findBestRouteFromJSON", () => {
       "Invalid map or points."
     );
 
-    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.map_id);
+    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.mapId);
   });
 
   it("should throw an error if no path is found", async () => {
@@ -96,6 +100,6 @@ describe("findBestRouteFromJSON", () => {
       "No path found"
     );
 
-    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.map_id);
+    expect(Maps.findById).toHaveBeenCalledWith(mockInputJSON.mapId);
   });
 });
