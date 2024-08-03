@@ -11,6 +11,9 @@ describe("updateWaypoint", () => {
       name: "Updated Waypoint",
       position: { x: 30, y: 40 }
     };
+
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
+
     const updatedWaypoint = { _id: id, ...newWaypoint };
 
     Waypoint.findByIdAndUpdate.mockResolvedValue(updatedWaypoint);
@@ -29,6 +32,8 @@ describe("updateWaypoint", () => {
       name: "Updated Waypoint",
       position: { x: 30, y: 40 }
     };
+
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
 
     Waypoint.findByIdAndUpdate.mockRejectedValue(
       new Error("Error updating waypoint")
@@ -50,12 +55,16 @@ describe("updateWaypoint", () => {
       position: { x: 30, y: 40 }
     };
 
+    Waypoint.findById = vi.fn().mockRejectedValue(id);
+
+    const expectedErrorMessage = "Error updating waypoint";
+
     Waypoint.findByIdAndUpdate.mockImplementation(() => {
-      throw new Error("Error updating waypoint");
+      throw new Error(expectedErrorMessage);
     });
 
     await expect(updateWaypoint(id, newWaypoint)).rejects.toThrow(
-      "Error updating waypoint"
+      expectedErrorMessage
     );
   });
 
@@ -63,12 +72,16 @@ describe("updateWaypoint", () => {
     const id = "12345";
     const newWaypoint = null;
 
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
+
+    const expectedErrorMessage = "Error updating waypoint";
+
     Waypoint.findByIdAndUpdate.mockImplementation(() => {
-      throw new Error("Error updating waypoint");
+      throw new Error(expectedErrorMessage);
     });
 
     await expect(updateWaypoint(id, newWaypoint)).rejects.toThrow(
-      "Error updating waypoint"
+      expectedErrorMessage
     );
   });
 
@@ -78,6 +91,8 @@ describe("updateWaypoint", () => {
       name: "Updated Waypoint",
       position: { x: 30, y: 40 }
     };
+
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
 
     Waypoint.findByIdAndUpdate.mockImplementation(() => {
       throw new Error("Error updating waypoint");
@@ -91,6 +106,8 @@ describe("updateWaypoint", () => {
   it("should handle a newWaypoint that is not an object", async () => {
     const id = "12345";
     const newWaypoint = "invalid waypoint";
+
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
 
     Waypoint.findByIdAndUpdate.mockImplementation(() => {
       throw new Error("Error updating waypoint");
