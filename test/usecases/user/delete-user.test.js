@@ -28,7 +28,9 @@ describe("deleteUser", () => {
   it("should throw an error if the user does not exist", async () => {
     User.findById.mockResolvedValue(null);
 
-    await expect(deleteUser(mockUserId)).rejects.toThrow("User not found.");
+    await expect(deleteUser(mockUserId)).rejects.toThrow(
+      `User with id ${mockUserId} not found`
+    );
 
     expect(User.findById).toHaveBeenCalledWith(mockUserId);
     expect(User.findByIdAndDelete).not.toHaveBeenCalled();

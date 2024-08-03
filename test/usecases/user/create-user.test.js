@@ -30,7 +30,7 @@ describe("createUser", () => {
   it("should throw an error if a user with the same email and username exists", async () => {
     User.findOne.mockResolvedValue(mockUser);
 
-    await expect(createUser(mockUser)).rejects.toThrow("Error creating user.");
+    await expect(createUser(mockUser)).rejects.toThrow("User already exists.");
 
     expect(User.findOne).toHaveBeenCalledWith({ email: mockUser.email });
     expect(User.findOne).toHaveBeenCalledWith({ username: mockUser.username });

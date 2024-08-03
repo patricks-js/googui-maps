@@ -19,7 +19,7 @@ describe("findUser", () => {
   it("should throw an error if the user is not found", async () => {
     User.findById.mockResolvedValue(null);
 
-    await expect(findUser("123")).rejects.toThrow("User not found.");
+    await expect(findUser("123")).rejects.toThrow("User with id 123 not found");
   });
 
   it("should throw an error if there is a problem with the database", async () => {
