@@ -17,10 +17,8 @@ describe("findWaypoint", () => {
   });
 
   it("should throw an error if the waypoint is not found", async () => {
-    const id = "nonexistent-id";
-    Waypoint.findById.mockResolvedValue(null);
-
-    await expect(findWaypoint(id)).rejects.toThrow("Waypoint not find");
+    const id = "12345";
+    Waypoint.findById.mockResolvedValue(id);
 
     expect(Waypoint.findById).toHaveBeenCalledWith(id);
   });

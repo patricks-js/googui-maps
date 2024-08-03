@@ -8,28 +8,33 @@ describe("deleteWaypoint", () => {
   it("should delete a waypoint successfully", async () => {
     const id = "12345";
     const deletedWaypoint = { _id: id, name: "Waypoint to delete" };
-    Waypoint.findByIdAndDelete.mockResolvedValue(deletedWaypoint);
 
-    const result = await deleteWaypoint(id);
+    Waypoint.findById = vi.fn().mockResolvedValue(deletedWaypoint);
+    Waypoint.findByIdAndDelete = vi.fn().mockResolvedValue(deletedWaypoint);
 
+    await deleteWaypoint(id);
+    expect(Waypoint.findById).toHaveBeenCalledWith(id);
     expect(Waypoint.findByIdAndDelete).toHaveBeenCalledWith(id);
-    expect(result).toEqual(deletedWaypoint);
   });
 
   it("should throw an error if the waypoint is not found", async () => {
     const id = "nonexistent-id";
-    Waypoint.findByIdAndDelete.mockResolvedValue(null);
+    Waypoint.findById = vi.fn().mockResolvedValue(null);
+    const expectedErrorMessage = `Waypoint with id ${id} not found`;
 
-    await expect(deleteWaypoint(id)).rejects.toThrow("Waypoint not found");
-
-    expect(Waypoint.findByIdAndDelete).toHaveBeenCalledWith(id);
+    await expect(deleteWaypoint(id)).rejects.toThrow(expectedErrorMessage);
   });
 
   it("should handle errors thrown by findByIdAndDelete", async () => {
     const id = "12345";
-    Waypoint.findByIdAndDelete.mockRejectedValue(new Error("Database error"));
+    Waypoint.findById = vi.fn().mockResolvedValue(id);
+    Waypoint.findByIdAndDelete.mockRejectedValue(
+      new Error("Error at deleting Waypoint")
+    );
 
-    await expect(deleteWaypoint(id)).rejects.toThrow("Database error");
+    await expect(deleteWaypoint(id)).rejects.toThrow(
+      "Error at deleting Waypoint"
+    );
 
     expect(Waypoint.findByIdAndDelete).toHaveBeenCalledWith(id);
   });
