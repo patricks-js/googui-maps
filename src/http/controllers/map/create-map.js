@@ -16,12 +16,8 @@ const mapSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function createMapControllers(request, reply) {
-  try {
-    const validatedMap = mapSchema.parse(request.body);
-    const newMap = await createMap(validatedMap);
+  const validatedMap = mapSchema.parse(request.body);
+  const newMap = await createMap(validatedMap);
 
-    return reply.status(201).send(newMap);
-  } catch (error) {
-    reply.status(400).send(error);
-  }
+  return reply.status(201).send(newMap);
 }

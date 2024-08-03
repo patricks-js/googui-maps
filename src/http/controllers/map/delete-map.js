@@ -1,21 +1,13 @@
-import { z } from "zod";
 import { deleteMap } from "../../../data/usecases/map/delete-map.js";
 
-const mapSchema = z.object({
-  id: z.string()
-});
 /**
  *
  * @param {import("fastify").FastifyRequest} request
  * @param {import("fastify").FastifyReply} reply
  */
-export function deleteMapController(request, reply) {
-  try {
-    mapSchema.parse(request.params);
+export async function deleteMapController(request, reply) {
+  const { id } = validators.idParamSchema(request.params);
+  await deleteMap(id);
 
-    deleteMap(request.params.id);
-    return reply.status(204).send();
-  } catch (error) {
-    reply.status(404).send(error);
-  }
+  return reply.status(204).send();
 }

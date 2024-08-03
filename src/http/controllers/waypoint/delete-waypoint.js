@@ -1,9 +1,5 @@
-import { z } from "zod";
 import { deleteWaypoint } from "../../../data/usecases/waypoint/delete-waypoint.js";
-
-const waypointSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 /**
  *
@@ -11,9 +7,9 @@ const waypointSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 
-export function deleteWaypointController(request, reply) {
-  waypointSchema.parse(request.params);
+export async function deleteWaypointController(request, reply) {
+  const { id } = validators.idParamSchema(request.params);
+  await deleteWaypoint(id);
 
-  deleteWaypoint(request.params.id);
   return reply.status(204).send();
 }

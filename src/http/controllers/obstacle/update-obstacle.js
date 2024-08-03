@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { updateObstacle } from "../../../data/usecases/obstacle/update-obstacle.js";
-
-const paramsSchema = z.object({
-  id: z.string()
-});
+import { validators } from "../../validators.js";
 
 const obstacleSchema = z.object({
   mapId: z.string(),
@@ -19,7 +16,7 @@ const obstacleSchema = z.object({
  * @param {import("fastify").FastifyReply} response
  */
 export async function updateObstacleController(request, response) {
-  const { id } = paramsSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
   const data = obstacleSchema.parse(request.body);
   return updateObstacle(id, data);
 }

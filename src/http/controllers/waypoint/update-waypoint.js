@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { updateWaypoint } from "../../../data/usecases/waypoint/update-waypoint.js";
-
-const paramsSchema = z.object({ id: z.string() });
+import { validators } from "../../validators.js";
 
 const bodySchema = z.object({
   mapId: z.string(),
@@ -17,7 +16,8 @@ const bodySchema = z.object({
  * @param {import("fastify").FastifyReply} response
  */
 export async function updateWaypointController(request, reply) {
-  const { id } = paramsSchema.parse(request.params);
+  const { id } = validators.idParamSchema(request.params);
+
   const body = bodySchema.parse(request.body);
 
   return updateWaypoint(id, body);
