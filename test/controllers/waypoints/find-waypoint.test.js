@@ -1,59 +1,45 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Waypoint } from "../../../src/data/models/waypoint.js";
 import { findWaypoint } from "../../../src/data/usecases/waypoint/find-waypoint.js";
-import { findWaypointController } from "../../../src/http/controllers/waypoint/find-waypoint.js";
+import { NotFoundError } from "../../../src/http/errors.js";
 
-vi.mock("../../../src/data/usecases/waypoint/find-waypoint.js");
+// Mock the Waypoint model
+vi.mock("../../../src/data/models/waypoint.js", () => ({
+  Waypoint: {
+    findById: vi.fn()
+  }
+}));
 
-describe("findWaypointController", () => {
-  it("should return 200 and the waypoint when found successfully", async () => {
-    const waypoint = {
-      id: "123",
-      mapId: "map1",
-      position: { x: 10, y: 20 },
-      name: "Waypoint A"
-    };
-    findWaypoint.mockResolvedValue(waypoint);
+describe("findWaypoint", () => {
+  const waypointId = "123";
+  const waypointData = {
+    id: waypointId,
+    mapId: "map1",
+    position: { x: 10, y: 20 },
+    name: "Waypoint 1"
+  };
 
-    const request = { params: { id: "123" } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
-
-    await findWaypointController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(200);
-    expect(reply.send).toHaveBeenCalledWith(waypoint);
+  beforeEach(() => {
+    Waypoint.findById.mockReset();
   });
 
-  it("should return 400 if validation fails", async () => {
-    const request = { params: { id: 0 } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+  it("should return a waypoint successfully when the waypoint exists", async () => {
+    Waypoint.findById.mockResolvedValue(waypointData); // Simulate an existing waypoint
 
-    await findWaypointController(request, reply);
+    const result = await findWaypoint(waypointId);
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith({
-      error: "Bad Request",
-      message: expect.any(Array) // Expect an array of errors
-    });
+    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
+    expect(result).toEqual(waypointData);
   });
 
-  it("should return 404 if the waypoint is not found", async () => {
-    findWaypoint.mockRejectedValue(new Error("Waypoint not found"));
+  it("should throw a NotFoundError when the waypoint does not exist", async () => {
+    Waypoint.findById.mockResolvedValue(null); // Simulate waypoint not found
 
-    const request = { params: { id: "nonexistent" } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+    await expect(findWaypoint(waypointId)).rejects.toThrow(NotFoundError);
+    await expect(findWaypoint(waypointId)).rejects.toThrow(
+      `Waypoint with id ${waypointId} not found`
+    );
 
-    await findWaypointController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith(new Error("Waypoint not found"));
+    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
   });
 });

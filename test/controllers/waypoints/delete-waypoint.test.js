@@ -1,37 +1,62 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Waypoint } from "../../../src/data/models/waypoint.js";
 import { deleteWaypoint } from "../../../src/data/usecases/waypoint/delete-waypoint.js";
-import { deleteWaypointController } from "../../../src/http/controllers/waypoint/delete-waypoint.js";
+import { NotFoundError, ServerError } from "../../../src/http/errors.js";
 
-vi.mock("../../../src/data/usecases/waypoint/delete-waypoint.js");
+// Mock the Waypoint model
+vi.mock("../../../src/data/models/waypoint.js", () => ({
+  Waypoint: {
+    findById: vi.fn(),
+    findByIdAndDelete: vi.fn()
+  }
+}));
 
-describe("deleteWaypointController", () => {
-  it("should return 204 when the waypoint is deleted successfully", async () => {
-    deleteWaypoint.mockResolvedValue();
+describe("deleteWaypoint", () => {
+  const waypointId = "123";
+  const waypointData = {
+    id: waypointId,
+    mapId: "map1",
+    position: { x: 10, y: 20 },
+    name: "Waypoint 1"
+  };
 
-    const request = { params: { id: "123" } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
-
-    await deleteWaypointController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(204);
-    expect(reply.send).toHaveBeenCalled();
+  beforeEach(() => {
+    Waypoint.findById.mockReset();
+    Waypoint.findByIdAndDelete.mockReset();
   });
 
-  it("should return 404 if the waypoint is not found", async () => {
-    deleteWaypoint.mockRejectedValue(new Error("Waypoint not found"));
+  it("should delete a waypoint successfully when the waypoint exists", async () => {
+    Waypoint.findById.mockResolvedValue(waypointData); // Simulate existing waypoint
+    Waypoint.findByIdAndDelete.mockResolvedValue(waypointData); // Simulate successful deletion
 
-    const request = { params: { id: 0 } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+    await deleteWaypoint(waypointId);
 
-    await deleteWaypointController(request, reply);
+    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
+    expect(Waypoint.findByIdAndDelete).toHaveBeenCalledWith(waypointId);
+  });
 
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalled();
+  it("should throw a NotFoundError when the waypoint does not exist", async () => {
+    Waypoint.findById.mockResolvedValue(null); // Simulate waypoint not found
+
+    await expect(deleteWaypoint(waypointId)).rejects.toThrow(NotFoundError);
+    await expect(deleteWaypoint(waypointId)).rejects.toThrow(
+      `Waypoint with id ${waypointId} not found`
+    );
+
+    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
+    expect(Waypoint.findByIdAndDelete).not.toHaveBeenCalled();
+  });
+
+  it("should throw a ServerError when there is an error during deletion", async () => {
+    Waypoint.findById.mockResolvedValue(waypointData); // Simulate existing waypoint
+    Waypoint.findByIdAndDelete.mockRejectedValue(new Error("Database error")); // Simulate deletion error
+
+    await expect(deleteWaypoint(waypointId)).rejects.toThrow(ServerError);
+    await expect(deleteWaypoint(waypointId)).rejects.toThrow(
+      "Error at deleting Waypoint"
+    );
+
+    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
+    expect(Waypoint.findByIdAndDelete).toHaveBeenCalledWith(waypointId);
   });
 });

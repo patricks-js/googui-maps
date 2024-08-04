@@ -1,45 +1,50 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Waypoint } from "../../../src/data/models/waypoint.js";
 import { createWaypoint } from "../../../src/data/usecases/waypoint/create-waypoint.js";
-import { createWaypointController } from "../../../src/http/controllers/waypoint/create-waypoint.js";
+import { BadRequestError } from "../../../src/http/errors.js";
 
-vi.mock("../../../src/data/usecases/waypoint/create-waypoint.js");
+// Mock the Waypoint model
+vi.mock("../../../src/data/models/waypoint.js", () => ({
+  Waypoint: {
+    findOne: vi.fn(),
+    create: vi.fn()
+  }
+}));
 
-describe("createWaypointController", () => {
-  it("should return 201 and the new waypoint when creation is successful", async () => {
-    const newWaypoint = {
-      id: "123",
-      mapId: "map123",
+describe("createWaypoint", () => {
+  let waypointData;
+
+  beforeEach(() => {
+    waypointData = {
+      mapId: "map1",
       position: { x: 10, y: 20 },
       name: "Waypoint 1"
     };
-    createWaypoint.mockResolvedValue(newWaypoint);
 
-    const request = {
-      body: { mapId: "map123", position: { x: 10, y: 20 }, name: "Waypoint 1" }
-    };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
-
-    await createWaypointController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(201);
-    expect(reply.send).toHaveBeenCalledWith(newWaypoint);
+    Waypoint.findOne.mockReset();
+    Waypoint.create.mockReset();
   });
 
-  it("should return 400 if the waypoint data is invalid", async () => {
-    const request = {
-      body: { mapId: 0, position: { x: 10, y: 20 }, name: "" }
-    };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+  it("should create a waypoint successfully when no waypoint with the same name exists", async () => {
+    Waypoint.findOne.mockResolvedValue(null); // No existing waypoint
+    Waypoint.create.mockResolvedValue(waypointData); // Simulate successful creation
 
-    await createWaypointController(request, reply);
+    const result = await createWaypoint(waypointData);
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalled();
+    expect(Waypoint.findOne).toHaveBeenCalledWith({ name: waypointData.name });
+    expect(Waypoint.create).toHaveBeenCalledWith(waypointData);
+    expect(result).toEqual(waypointData);
+  });
+
+  it("should throw a BadRequestError when a waypoint with the same name already exists", async () => {
+    Waypoint.findOne.mockResolvedValue(waypointData); // Existing waypoint with the same name
+
+    await expect(createWaypoint(waypointData)).rejects.toThrow(BadRequestError);
+    await expect(createWaypoint(waypointData)).rejects.toThrow(
+      "Waypoint already exists"
+    );
+
+    expect(Waypoint.findOne).toHaveBeenCalledWith({ name: waypointData.name });
+    expect(Waypoint.create).not.toHaveBeenCalled();
   });
 });
