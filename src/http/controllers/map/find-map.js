@@ -1,4 +1,5 @@
 import { findMapById } from "../../../data/usecases/map/find-map.js";
+import { validators } from "../../validators.js";
 
 /**
  * @param {import("fastify").FastifyRequest} request

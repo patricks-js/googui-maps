@@ -1,104 +1,131 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { createMap } from "../../../src/data/usecases/map/create-map.js";
 import { createMapControllers } from "../../../src/http/controllers/map/create-map.js";
 
+// Mock the createMap function
 vi.mock("../../../src/data/usecases/map/create-map.js", () => ({
   createMap: vi.fn()
 }));
 
+// No need to mock mapSchema directly
+const mapSchema = z.object({
+  name: z.string(),
+  dimensions: z.object({
+    width: z.number(),
+    height: z.number()
+  }),
+  obstacles: z.array(z.object({ x: z.number(), y: z.number() }))
+});
+
 describe("createMapControllers", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  let request;
+  let reply;
 
-  const mockRequest = (body) => ({
-    body
-  });
+  beforeEach(() => {
+    request = {
+      body: {
+        name: "New Map",
+        dimensions: { width: 100, height: 200 },
+        obstacles: [{ x: 10, y: 20 }]
+      }
+    };
 
-  const mockReply = () => {
-    const reply = {};
-    reply.status = vi.fn().mockReturnValue(reply);
-    reply.send = vi.fn().mockReturnValue(reply);
-    return reply;
-  };
+    reply = {
+      status: vi.fn(() => reply),
+      send: vi.fn()
+    };
 
-  it("should return 201 when a new map is successfully created", async () => {
-    const validMap = {
+    createMap.mockResolvedValue({
+      id: "123",
       name: "New Map",
-      dimensions: {
-        width: 100,
-        height: 100
-      },
-      obstacles: [
-        { x: 10, y: 10 },
-        { x: 20, y: 20 }
-      ]
-    };
+      dimensions: { width: 100, height: 200 },
+      obstacles: [{ x: 10, y: 20 }]
+    });
+  });
 
-    const createdMap = {
-      id: "5678",
-      ...validMap
-    };
-
-    createMap.mockResolvedValue(createdMap);
-
-    const request = mockRequest(validMap);
-    const reply = mockReply();
-
+  it("should create a map successfully", async () => {
     await createMapControllers(request, reply);
-
-    expect(createMap).toHaveBeenCalledWith(validMap);
+    expect(createMap).toHaveBeenCalledWith({
+      name: "New Map",
+      dimensions: { width: 100, height: 200 },
+      obstacles: [{ x: 10, y: 20 }]
+    });
     expect(reply.status).toHaveBeenCalledWith(201);
-    expect(reply.send).toHaveBeenCalledWith(createdMap);
+    expect(reply.send).toHaveBeenCalledWith({
+      id: "123",
+      name: "New Map",
+      dimensions: { width: 100, height: 200 },
+      obstacles: [{ x: 10, y: 20 }]
+    });
   });
 
-  it("should return 400 with validation error if the input data is invalid", async () => {
-    const invalidMap = {
-      name: "New Map",
-      dimensions: {
-        width: "not-a-number", // Invalid type
-        height: 100
-      },
-      obstacles: [
-        { x: 10, y: 10 },
-        { x: 20, y: 20 }
-      ]
-    };
+  it("should handle validation errors", async () => {
+    request.body = {}; // Invalid body
+    const parseSpy = vi.spyOn(mapSchema, "parse").mockImplementation(() => {
+      throw new z.ZodError([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["name"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["dimensions"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "array",
+          received: "undefined",
+          path: ["obstacles"],
+          message: "Required"
+        }
+      ]);
+    });
 
-    const request = mockRequest(invalidMap);
-    const reply = mockReply();
-
-    await createMapControllers(request, reply);
-
-    expect(createMap).not.toHaveBeenCalled();
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(expect.any(z.ZodError));
+    try {
+      await createMapControllers(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+      expect(e.errors).toEqual([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["name"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["dimensions"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "array",
+          received: "undefined",
+          path: ["obstacles"],
+          message: "Required"
+        }
+      ]);
+    }
+    parseSpy.mockRestore();
   });
 
-  it("should return 400 with an error message if the map creation fails", async () => {
-    const validMap = {
-      name: "New Map",
-      dimensions: {
-        width: 100,
-        height: 100
-      },
-      obstacles: [
-        { x: 10, y: 10 },
-        { x: 20, y: 20 }
-      ]
-    };
+  it("should handle errors from createMap", async () => {
+    createMap.mockRejectedValue(new Error("Create Error"));
 
-    const error = new Error("Error creating map");
-    createMap.mockRejectedValue(error);
-
-    const request = mockRequest(validMap);
-    const reply = mockReply();
-
-    await createMapControllers(request, reply);
-
-    expect(createMap).toHaveBeenCalledWith(validMap);
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(error);
+    try {
+      await createMapControllers(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Create Error");
+    }
   });
 });

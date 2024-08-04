@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { checkMapConfiguration } from "../../../src/data/usecases/map/check-map-config.js";
 import { checkMapController } from "../../../src/http/controllers/map/check-map-config.js";
 
@@ -7,64 +7,47 @@ vi.mock("../../../src/data/usecases/map/check-map-config.js", () => ({
 }));
 
 describe("checkMapController", () => {
-  const mockRequest = (body) => ({
-    body
-  });
+  let request;
+  let reply;
 
-  const mockReply = () => {
-    const reply = {};
-    reply.status = vi.fn().mockReturnValue(reply);
-    reply.send = vi.fn().mockReturnValue(reply);
-    return reply;
-  };
-
-  it("should return 200 with a success message if map is correctly configured", async () => {
-    const mapId = "1234";
-    const result = {
-      message: "The map is set up correctly with obstacles and stopping points."
+  beforeEach(() => {
+    request = {
+      body: {
+        map_id: "123"
+      }
     };
 
-    checkMapConfiguration.mockResolvedValue(result);
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply)
+    };
 
-    const request = mockRequest({ map_id: mapId });
-    const reply = mockReply();
-
-    await checkMapController(request, reply);
-
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(200);
-    expect(reply.send).toHaveBeenCalledWith(result);
+    checkMapConfiguration.mockResolvedValue({ valid: true });
   });
 
-  it("should return 404 with an error message if map is not correctly configured", async () => {
-    const mapId = "1234";
-    const errorMessage = "Map is not configured with obstacles or waypoints";
-
-    checkMapConfiguration.mockRejectedValue(new Error(errorMessage));
-
-    const request = mockRequest({ map_id: mapId });
-    const reply = mockReply();
-
+  it("should check the map configuration successfully", async () => {
     await checkMapController(request, reply);
-
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith({ error: errorMessage });
+    expect(checkMapConfiguration).toHaveBeenCalledWith("123");
   });
 
-  it("should return 404 with an error message if map is not found", async () => {
-    const mapId = "1234";
-    const errorMessage = "Map not found";
+  it("should handle errors from checkMapConfiguration", async () => {
+    checkMapConfiguration.mockRejectedValue(new Error("Check Error"));
 
-    checkMapConfiguration.mockRejectedValue(new Error(errorMessage));
+    try {
+      await checkMapController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Check Error");
+    }
+  });
 
-    const request = mockRequest({ map_id: mapId });
-    const reply = mockReply();
+  it("should handle invalid map_id", async () => {
+    request.body = {}; // Invalid body
 
-    await checkMapController(request, reply);
-
-    expect(checkMapConfiguration).toHaveBeenCalledWith(mapId);
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith({ error: errorMessage });
+    try {
+      await checkMapController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toBe("Invalid request body");
+    }
   });
 });

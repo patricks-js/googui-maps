@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { updateMap } from "../../../data/usecases/map/update-map.js";
+import { validators } from "../../validators.js";
 
 const mapSchema = z.object({
   name: z.string(),

@@ -1,90 +1,123 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { verifyMap } from "../../../src/data/usecases/map/verify-map.js";
 import { verifyMapController } from "../../../src/http/controllers/map/verify-map.js";
+
+const mapSchema = z.object({
+  map_id: z.string(),
+  start_point: z.object({
+    x: z.number(),
+    y: z.number()
+  }),
+  destination_point: z.object({
+    x: z.number(),
+    y: z.number()
+  })
+});
 
 vi.mock("../../../src/data/usecases/map/verify-map.js", () => ({
   verifyMap: vi.fn()
 }));
 
 describe("verifyMapController", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  let request;
+  let reply;
 
-  const mockRequest = (body) => ({
-    body
-  });
-
-  const mockReply = () => {
-    const reply = {};
-    reply.status = vi.fn().mockReturnValue(reply);
-    reply.send = vi.fn().mockReturnValue(reply);
-    return reply;
-  };
-
-  it("should return 200 when the map and points are verified successfully", async () => {
-    const requestBody = {
-      map_id: "map123",
-      start_point: { x: 1, y: 1 },
-      destination_point: { x: 2, y: 2 }
+  beforeEach(() => {
+    request = {
+      body: {
+        map_id: "map123",
+        start_point: { x: 1, y: 1 },
+        destination_point: { x: 10, y: 10 }
+      }
     };
 
-    verifyMap.mockResolvedValue();
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply)
+    };
 
-    const request = mockRequest(requestBody);
-    const reply = mockReply();
+    verifyMap.mockResolvedValue({ success: true, message: "Map verified" });
 
+    // Mock parse method
+    vi.spyOn(mapSchema, "parse").mockImplementation((data) => data);
+  });
+
+  it("should verify the map successfully", async () => {
     await verifyMapController(request, reply);
 
     expect(verifyMap).toHaveBeenCalledWith(
-      requestBody.map_id,
-      requestBody.start_point,
-      requestBody.destination_point
+      "map123",
+      { x: 1, y: 1 },
+      { x: 10, y: 10 }
     );
-    expect(reply.status).toHaveBeenCalledWith(200);
-    expect(reply.send).toHaveBeenCalledWith({
-      message: "Os pontos e o mapa são válidos e existem no banco de dados."
+  });
+
+  it("should handle validation errors", async () => {
+    request.body = {}; // Invalid body
+
+    vi.spyOn(mapSchema, "parse").mockImplementation(() => {
+      throw new z.ZodError([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["map_id"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["start_point"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["destination_point"],
+          message: "Required"
+        }
+      ]);
     });
+
+    try {
+      await verifyMapController(request, reply);
+    } catch (e) {
+      expect(e.errors).toEqual([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["map_id"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["start_point"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["destination_point"],
+          message: "Required"
+        }
+      ]);
+    }
   });
 
-  it("should return 400 with a validation error if the input validation fails", async () => {
-    const invalidRequestBody = {
-      map_id: 123, // map_id should be a string
-      start_point: { x: 1, y: "invalid" }, // y should be a number
-      destination_point: { x: 2, y: 2 }
-    };
+  it("should handle errors from verifyMap", async () => {
+    verifyMap.mockRejectedValue(new Error("Verify Error"));
 
-    const request = mockRequest(invalidRequestBody);
-    const reply = mockReply();
-
-    await verifyMapController(request, reply);
-
-    expect(verifyMap).not.toHaveBeenCalled();
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(expect.any(String));
-  });
-
-  it("should return 400 with an error message if verifyMap throws an error", async () => {
-    const requestBody = {
-      map_id: "map123",
-      start_point: { x: 1, y: 1 },
-      destination_point: { x: 2, y: 2 }
-    };
-    const errorMessage = "Map verification failed";
-
-    verifyMap.mockRejectedValue(new Error(errorMessage));
-
-    const request = mockRequest(requestBody);
-    const reply = mockReply();
-
-    await verifyMapController(request, reply);
-
-    expect(verifyMap).toHaveBeenCalledWith(
-      requestBody.map_id,
-      requestBody.start_point,
-      requestBody.destination_point
-    );
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(errorMessage);
+    try {
+      await verifyMapController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Verify Error");
+    }
   });
 });

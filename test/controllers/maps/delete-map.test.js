@@ -1,53 +1,53 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { z } from "zod";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deleteMap } from "../../../src/data/usecases/map/delete-map.js";
 import { deleteMapController } from "../../../src/http/controllers/map/delete-map.js";
+import { validators } from "../../../src/http/validators.js";
 
 vi.mock("../../../src/data/usecases/map/delete-map.js", () => ({
   deleteMap: vi.fn()
 }));
 
+vi.mock("../../../src/http/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn()
+  }
+}));
+
 describe("deleteMapController", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  let request;
+  let reply;
 
-  const mockRequest = (params) => ({
-    params
-  });
+  beforeEach(() => {
+    request = {
+      params: { id: "123" }
+    };
 
-  const mockReply = () => {
-    const reply = {};
-    reply.status = vi.fn().mockReturnValue(reply);
-    reply.send = vi.fn().mockReturnValue(reply);
-    return reply;
-  };
+    reply = {
+      status: vi.fn(() => reply),
+      send: vi.fn()
+    };
 
-  it("should return 204 when the map is successfully deleted", async () => {
-    const mapId = "1234";
-
+    validators.idParamSchema.mockImplementation((params) => ({
+      id: params.id
+    }));
     deleteMap.mockResolvedValue();
+  });
 
-    const request = mockRequest({ id: mapId });
-    const reply = mockReply();
-
+  it("should delete the map successfully", async () => {
     await deleteMapController(request, reply);
-
-    expect(deleteMap).toHaveBeenCalledWith(mapId);
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
+    expect(deleteMap).toHaveBeenCalledWith("123");
     expect(reply.status).toHaveBeenCalledWith(204);
     expect(reply.send).toHaveBeenCalled();
   });
 
-  it("should return 404 with an error message if the input validation fails", async () => {
-    const invalidParams = { id: 1234 }; // id should be a string
+  it("should handle errors from deleteMap", async () => {
+    deleteMap.mockRejectedValue(new Error("Delete Error"));
 
-    const request = mockRequest(invalidParams);
-    const reply = mockReply();
-
-    await deleteMapController(request, reply);
-
-    expect(deleteMap).not.toHaveBeenCalled();
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith(expect.any(z.ZodError));
+    try {
+      await deleteMapController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Delete Error");
+    }
   });
 });

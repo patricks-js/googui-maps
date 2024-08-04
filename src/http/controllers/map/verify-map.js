@@ -18,20 +18,13 @@ const mapSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function verifyMapController(request, reply) {
-  try {
-    mapSchema.parse(request.body);
+  mapSchema.parse(request.body);
 
-    const {
-      map_id: mapId,
-      start_point: startPoint,
-      destination_point: destinationPoint
-    } = request.body;
+  const {
+    map_id: mapId,
+    start_point: startPoint,
+    destination_point: destinationPoint
+  } = request.body;
 
-    await verifyMap(mapId, startPoint, destinationPoint);
-    return reply.status(200).send({
-      message: "Os pontos e o mapa são válidos e existem no banco de dados."
-    });
-  } catch (error) {
-    reply.status(400).send(error.message);
-  }
+  return verifyMap(mapId, startPoint, destinationPoint);
 }
