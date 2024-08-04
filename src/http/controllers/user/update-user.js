@@ -1,15 +1,20 @@
+import { z } from "zod";
 import { updateUser } from "../../../data/usecases/user/update-user.js";
 import { validators } from "../../validators.js";
 
+const userSchema = z.object({
+  username: z.string(),
+  email: z.string().email(),
+  _id: z.string()
+});
+
 /**
- *
  * @param {import("fastify").FastifyRequest} request
  * @param {import("fastify").FastifyReply} reply
  */
 export async function updateUserController(request, reply) {
   const { id } = validators.idParamSchema(request.params);
-  const changes = validators.updateUserSchema(request.body);
-  const user = await updateUser(id, changes);
+  const changes = userSchema.parse(request.body);
 
-  reply.status(204).send(user);
+  return updateUser(id, changes);
 }

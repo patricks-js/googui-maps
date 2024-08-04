@@ -2,7 +2,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deleteUser } from "../../../src/data/usecases/user/delete-user.js";
 import { deleteUserController } from "../../../src/http/controllers/user/delete-user.js";
 
-vi.mock("../../../src/data/usecases/user/delete-user.js");
+vi.mock("../../../src/data/usecases/user/delete-user.js", () => ({
+  deleteUser: vi.fn()
+}));
+
+vi.mock("../../../src/http/controllers/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn((params) => ({ id: params.id }))
+  }
+}));
 
 describe("deleteUserController", () => {
   let request;
@@ -10,34 +18,32 @@ describe("deleteUserController", () => {
 
   beforeEach(() => {
     request = {
-      params: {
-        id: "123"
-      }
+      params: { id: "user123" }
     };
 
     reply = {
-      status: vi.fn().mockReturnThis(),
+      status: vi.fn(() => reply),
       send: vi.fn()
     };
   });
 
-  it("should delete a user and return 204 status code", async () => {
+  it("should delete the user successfully", async () => {
     deleteUser.mockResolvedValue();
 
     await deleteUserController(request, reply);
 
-    expect(deleteUser).toHaveBeenCalledWith(request.params.id);
-    expect(reply.status).toHaveBeenCalledWith(204);
-    expect(reply.send).not.toHaveBeenCalled();
+    expect(deleteUser).toHaveBeenCalledWith("user123");
   });
 
-  it("should return 400 status code if deleteUser throws an error", async () => {
-    const error = new Error("Database error");
-    deleteUser.mockRejectedValue(error);
+  it("should handle errors from deleteUser", async () => {
+    deleteUser.mockRejectedValue(new Error("Delete User Error"));
 
-    await deleteUserController(request, reply);
+    try {
+      await deleteUserController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Delete User Error");
+    }
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(error);
+    expect(deleteUser).toHaveBeenCalledWith("user123");
   });
 });

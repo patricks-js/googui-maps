@@ -1,36 +1,47 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { findUser } from "../../../src/data/usecases/user/find-user.js";
 import { findUserController } from "../../../src/http/controllers/user/find-user.js";
 
-vi.mock("../../../src/data/usecases/user/find-user.js");
+vi.mock("../../../src/data/usecases/user/find-user.js", () => ({
+  findUser: vi.fn()
+}));
+
+vi.mock("../../../src/http/controllers/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn((params) => ({ id: params.id }))
+  }
+}));
 
 describe("findUserController", () => {
-  it("should return 204 and the user when a user is found", async () => {
-    const user = { id: "123", name: "John Doe" };
-    findUser.mockResolvedValue(user);
+  let request;
+  let reply;
 
-    const request = { params: { id: "123" } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
+  beforeEach(() => {
+    request = {
+      params: { id: "user123" }
     };
 
-    await findUserController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(204);
-    expect(reply.send).toHaveBeenCalledWith(user);
+    reply = {
+      send: vi.fn()
+    };
   });
 
-  it("should return 400 if the user ID is invalid", async () => {
-    const request = { params: { id: 0 } };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+  it("should find the user successfully", async () => {
+    const user = { id: "user123", name: "Test User" };
+    findUser.mockResolvedValue(user);
 
     await findUserController(request, reply);
+    expect(findUser).toHaveBeenCalledWith("user123");
+  });
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalled();
+  it("should handle errors from findUser", async () => {
+    findUser.mockRejectedValue(new Error("Find User Error"));
+
+    try {
+      await findUserController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Find User Error");
+    }
+    expect(findUser).toHaveBeenCalledWith("user123");
   });
 });

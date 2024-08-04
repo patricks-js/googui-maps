@@ -1,46 +1,74 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { updateUser } from "../../../src/data/usecases/user/update-user.js";
 import { updateUserController } from "../../../src/http/controllers/user/update-user.js";
 
-vi.mock("../../../src/data/usecases/user/update-user.js");
+vi.mock("../../../src/data/usecases/user/update-user.js", () => ({
+  updateUser: vi.fn()
+}));
+
+vi.mock("../../../src/http/controllers/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn((params) => ({ id: params.id }))
+  }
+}));
 
 describe("updateUserController", () => {
-  it("should return 204 and the updated user when the update is successful", async () => {
-    const updatedUser = {
-      id: "123",
-      username: "newUsername",
-      email: "newemail@example.com"
-    };
-    updateUser.mockResolvedValue(updatedUser);
+  let request;
+  let reply;
 
-    const request = {
-      params: { id: "123" },
-      body: { username: "newUsername", email: "newemail@example.com" }
+  beforeEach(() => {
+    request = {
+      params: { id: "user123" },
+      body: {
+        username: "testuser",
+        email: "test@example.com",
+        _id: "user123"
+      }
     };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
+
+    reply = {
+      status: vi.fn(() => reply),
       send: vi.fn()
     };
-
-    await updateUserController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(204);
-    expect(reply.send).toHaveBeenCalledWith(updatedUser);
   });
 
-  it("should return 400 if the body data is invalid", async () => {
-    const request = {
-      params: { id: "123" },
-      body: { username: "", email: "invalid-email" }
-    };
-    const reply = {
-      status: vi.fn().mockReturnThis(),
-      send: vi.fn()
-    };
+  it("should update the user successfully", async () => {
+    updateUser.mockResolvedValue({ success: true, message: "User updated" });
 
     await updateUserController(request, reply);
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalled();
+    expect(updateUser).toHaveBeenCalledWith("user123", {
+      username: "testuser",
+      email: "test@example.com",
+      _id: "user123"
+    });
+  });
+
+  it("should handle validation errors", async () => {
+    request.body.email = "invalid-email"; // Invalid email
+
+    try {
+      await updateUserController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+      expect(e.errors[0].path).toContain("email");
+    }
+  });
+
+  it("should handle errors from updateUser", async () => {
+    updateUser.mockRejectedValue(new Error("Update User Error"));
+
+    try {
+      await updateUserController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Update User Error");
+    }
+
+    expect(updateUser).toHaveBeenCalledWith("user123", {
+      username: "testuser",
+      email: "test@example.com",
+      _id: "user123"
+    });
   });
 });

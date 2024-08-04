@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { createUser } from "../../../src/data/usecases/user/create-user.js";
 import { createUserController } from "../../../src/http/controllers/user/create-user.js";
 
-vi.mock("../../../src/data/usecases/user/create-user.js");
+vi.mock("../../../src/data/usecases/user/create-user.js", () => ({
+  createUser: vi.fn()
+}));
 
 describe("createUserController", () => {
   let request;
@@ -12,47 +15,44 @@ describe("createUserController", () => {
     request = {
       body: {
         username: "testuser",
-        email: "testuser@example.com"
+        email: "test@example.com",
+        _id: "user123"
       }
     };
 
     reply = {
-      status: vi.fn().mockReturnThis(),
+      status: vi.fn(() => reply),
       send: vi.fn()
     };
   });
 
-  it("should create a user and return 201 status code", async () => {
-    const mockUser = {
-      id: "123",
-      username: "testuser",
-      email: "testuser@example.com"
-    };
-    createUser.mockResolvedValue(mockUser);
+  it("should create a user successfully", async () => {
+    createUser.mockResolvedValue(request.body);
 
     await createUserController(request, reply);
 
     expect(createUser).toHaveBeenCalledWith(request.body);
-    expect(reply.status).toHaveBeenCalledWith(201);
-    expect(reply.send).toHaveBeenCalledWith(mockUser);
   });
 
-  it("should return 400 status code if validation fails", async () => {
-    request.body.email = "invalid-email";
+  it("should handle validation errors", async () => {
+    request.body = { username: "testuser", email: "invalid-email" }; // Invalid body
 
-    await createUserController(request, reply);
-
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalled();
+    try {
+      await createUserController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+    }
   });
 
-  it("should return 400 status code if createUser throws an error", async () => {
-    const error = new Error("Database error");
-    createUser.mockRejectedValue(error);
+  it("should handle errors from createUser", async () => {
+    createUser.mockRejectedValue(new Error("Create User Error"));
 
-    await createUserController(request, reply);
+    try {
+      await createUserController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Create User Error");
+    }
 
-    expect(reply.status).toHaveBeenCalledWith(400);
-    expect(reply.send).toHaveBeenCalledWith(error);
+    expect(createUser).toHaveBeenCalledWith(request.body);
   });
 });

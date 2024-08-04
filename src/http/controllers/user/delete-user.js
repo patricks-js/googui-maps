@@ -8,7 +8,6 @@ import { validators } from "../../validators.js";
  */
 export async function deleteUserController(request, reply) {
   const { id } = validators.idParamSchema(request.params);
-  await deleteUser(id);
 
-  reply.status(204);
+  return deleteUser(id);
 }
