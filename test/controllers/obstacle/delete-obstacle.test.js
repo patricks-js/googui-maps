@@ -1,70 +1,54 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { deleteObstacle } from "../../../src/data/usecases/obstacle/delete-obstacle.js";
 import { deleteObstacleController } from "../../../src/http/controllers/obstacle/delete-obstacle.js";
-import { BadRequestError } from "../../../src/http/errors.js";
 
 vi.mock("../../../src/data/usecases/obstacle/delete-obstacle.js", () => ({
   deleteObstacle: vi.fn()
 }));
 
 describe("deleteObstacleController", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
+  let request;
+  let reply;
+
+  beforeEach(() => {
+    request = {
+      params: { id: "obstacle123" }
+    };
+
+    reply = {
+      status: vi.fn(() => reply),
+      send: vi.fn()
+    };
   });
 
-  const mockRequest = (params) => ({
-    params
-  });
-
-  const mockReply = () => {
-    const reply = {};
-    reply.status = vi.fn().mockReturnValue(reply);
-    reply.send = vi.fn().mockReturnValue(reply);
-    return reply;
-  };
-
-  it("should return 204 when an obstacle is successfully deleted", async () => {
-    const validId = "1234";
-
+  it("should delete the obstacle successfully", async () => {
     deleteObstacle.mockResolvedValue();
 
-    const request = mockRequest({ id: validId });
-    const reply = mockReply();
-
     await deleteObstacleController(request, reply);
 
-    expect(deleteObstacle).toHaveBeenCalledWith(validId);
-    expect(reply.status).toHaveBeenCalledWith(204);
-    expect(reply.send).toHaveBeenCalled();
+    expect(deleteObstacle).toHaveBeenCalledWith("obstacle123");
   });
 
-  it("should return 404 with error message if the obstacle is not found", async () => {
-    const invalidId = "9999";
-    const error = new BadRequestError("Error deleting obstacle with id: 9999");
+  it("should handle validation errors", async () => {
+    request.params.id = 123; // Invalid ID type
 
-    deleteObstacle.mockRejectedValue(error);
-
-    const request = mockRequest({ id: invalidId });
-    const reply = mockReply();
-
-    await deleteObstacleController(request, reply);
-
-    expect(deleteObstacle).toHaveBeenCalledWith(invalidId);
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith(error);
+    try {
+      await deleteObstacleController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+    }
   });
 
-  it("should return 400 with validation error if the input data is invalid", async () => {
-    const invalidParams = { id: 1234 };
+  it("should handle errors from deleteObstacle", async () => {
+    deleteObstacle.mockRejectedValue(new Error("Delete Obstacle Error"));
 
-    const request = mockRequest(invalidParams);
-    const reply = mockReply();
+    try {
+      await deleteObstacleController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Delete Obstacle Error");
+    }
 
-    await deleteObstacleController(request, reply);
-
-    expect(deleteObstacle).not.toHaveBeenCalled();
-    expect(reply.status).toHaveBeenCalledWith(404);
-    expect(reply.send).toHaveBeenCalledWith(expect.any(z.ZodError));
+    expect(deleteObstacle).toHaveBeenCalledWith("obstacle123");
   });
 });

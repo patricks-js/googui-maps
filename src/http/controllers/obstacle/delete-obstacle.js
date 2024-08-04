@@ -9,12 +9,7 @@ const paramsSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function deleteObstacleController(request, reply) {
-  try {
-    const { id } = paramsSchema.parse(request.params);
-    await deleteObstacle(id);
+  const { id } = paramsSchema.parse(request.params);
 
-    reply.status(204).send();
-  } catch (error) {
-    reply.status(404).send(error);
-  }
+  return deleteObstacle(id);
 }
