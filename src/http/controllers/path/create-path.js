@@ -20,7 +20,6 @@ const bodySchema = z.object({
  */
 export async function createPathController(request, reply) {
   const body = bodySchema.parse(request.body);
-  const createdPath = await createPath(body);
 
-  reply.status(201).send(createdPath);
+  return createPath(body);
 }

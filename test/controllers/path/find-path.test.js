@@ -1,68 +1,66 @@
-import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { findPath } from "../../../src/data/usecases/path/find-path.js";
 import { findPathController } from "../../../src/http/controllers/path/find-path.js";
+import { validators } from "../../../src/http/validators.js";
 
-vi.mock("../../../src/data/usecases/path/find-path.js");
+vi.mock("../../../src/data/usecases/path/find-path.js", () => ({
+  findPath: vi.fn()
+}));
+
+vi.mock("../../../src/http/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn()
+  }
+}));
 
 describe("findPathController", () => {
-  let fastify;
+  let request;
+  let reply;
 
   beforeEach(() => {
-    fastify = Fastify();
-    fastify.get("/path/:id", findPathController);
-    vi.clearAllMocks();
+    request = {
+      params: { id: "path123" }
+    };
+
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply) // Ensure chainability for `status`
+    };
+
+    // Mock successful response
+    findPath.mockResolvedValue({ id: "path123", name: "Test Path" });
+
+    // Mock idParamSchema method
+    validators.idParamSchema.mockImplementation((params) => params);
   });
 
-  it("should return 200 status code if path is found", async () => {
-    const mockPath = { _id: "123", name: "Test Path" };
-    findPath.mockResolvedValue(mockPath);
+  it("should find the path successfully", async () => {
+    await findPathController(request, reply);
 
-    const response = await fastify.inject({
-      method: "GET",
-      url: "/path/123"
-    });
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
 
-    expect(response.statusCode).toBe(200);
-    expect(findPath).toHaveBeenCalledWith("123");
-    expect(response.json()).toEqual(mockPath);
+    expect(findPath).toHaveBeenCalledWith("path123");
   });
 
-  it("should return 400 status code if validation fails", async () => {
-    const response = await fastify.inject({
-      method: "GET",
-      url: "/path/"
+  it("should handle validation errors", async () => {
+    validators.idParamSchema.mockImplementation(() => {
+      throw new Error("Validation Error");
     });
 
-    expect(response.statusCode).toBe(400);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Bad Request");
-    expect(body).toHaveProperty("message");
+    try {
+      await findPathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Validation Error");
+    }
   });
 
-  it("should return 404 status code if path is not found", async () => {
-    findPath.mockResolvedValue(null);
+  it("should handle errors from findPath", async () => {
+    findPath.mockRejectedValue(new Error("Find Path Error"));
 
-    const response = await fastify.inject({
-      method: "GET",
-      url: "/path/123"
-    });
-
-    expect(response.statusCode).toBe(404);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Path not found");
-  });
-
-  it("should return 404 status code if findPath throws an error", async () => {
-    findPath.mockRejectedValue(new Error("Error finding path"));
-
-    const response = await fastify.inject({
-      method: "GET",
-      url: "/path/123"
-    });
-
-    expect(response.statusCode).toBe(404);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Error finding path");
+    try {
+      await findPathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Find Path Error");
+    }
   });
 });

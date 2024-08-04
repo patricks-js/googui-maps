@@ -7,7 +7,6 @@ import { validators } from "../../validators.js";
  */
 export async function deletePathController(request, reply) {
   const { id } = validators.idParamSchema(request.params);
-  await deletePath(id);
 
-  return reply.status(204).send();
+  return deletePath(id);
 }

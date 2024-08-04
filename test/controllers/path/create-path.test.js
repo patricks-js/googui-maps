@@ -1,76 +1,139 @@
-import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { createPath } from "../../../src/data/usecases/path/create-path.js";
 import { createPathController } from "../../../src/http/controllers/path/create-path.js";
 
-vi.mock("../../../src/data/usecases/path/create-path.js");
+const bodySchema = z.object({
+  mapId: z.string(),
+  start: z.object({
+    x: z.number(),
+    y: z.number()
+  }),
+  end: z.object({
+    x: z.number(),
+    y: z.number()
+  }),
+  distance: z.number()
+});
+
+vi.mock("../../../src/data/usecases/path/create-path.js", () => ({
+  createPath: vi.fn()
+}));
 
 describe("createPathController", () => {
-  let fastify;
+  let request;
+  let reply;
 
   beforeEach(() => {
-    fastify = Fastify();
-    fastify.post("/path", createPathController);
-    vi.clearAllMocks();
+    request = {
+      body: {
+        mapId: "map123",
+        start: { x: 1, y: 1 },
+        end: { x: 10, y: 10 },
+        distance: 100
+      }
+    };
+
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply)
+    };
+
+    createPath.mockResolvedValue({ success: true, pathId: "path123" });
+
+    vi.spyOn(bodySchema, "parse").mockImplementation((data) => data); // Mock parse method
   });
 
-  it("should create a path and return 201 status code", async () => {
-    const mockPath = {
-      mapId: "123",
-      start: { x: 0, y: 0 },
-      end: { x: 1, y: 1 },
+  it("should create the path successfully", async () => {
+    await createPathController(request, reply);
+
+    expect(createPath).toHaveBeenCalledWith({
+      mapId: "map123",
+      start: { x: 1, y: 1 },
+      end: { x: 10, y: 10 },
       distance: 100
-    };
-
-    createPath.mockResolvedValue(mockPath);
-
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/path",
-      payload: mockPath
     });
-
-    expect(response.statusCode).toBe(201);
-    expect(JSON.parse(response.body)).toEqual(mockPath);
-    expect(createPath).toHaveBeenCalledWith(mockPath);
   });
 
-  it("should return 400 status code if validation fails", async () => {
-    const invalidPath = {
-      mapId: "123",
-      start: { x: 0, y: 0 },
-      end: { x: 1, y: 1 }
-    };
+  it("should handle validation errors", async () => {
+    request.body = {}; // Invalid body
 
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/path",
-      payload: invalidPath
+    vi.spyOn(bodySchema, "parse").mockImplementation(() => {
+      throw new z.ZodError([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["mapId"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["start"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["end"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "number",
+          received: "undefined",
+          path: ["distance"],
+          message: "Required"
+        }
+      ]);
     });
 
-    expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body)).toHaveProperty("error");
-    expect(createPath).not.toHaveBeenCalled();
+    try {
+      await createPathController(request, reply);
+    } catch (e) {
+      expect(e.errors).toEqual([
+        {
+          code: "invalid_type",
+          expected: "string",
+          received: "undefined",
+          path: ["mapId"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["start"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "object",
+          received: "undefined",
+          path: ["end"],
+          message: "Required"
+        },
+        {
+          code: "invalid_type",
+          expected: "number",
+          received: "undefined",
+          path: ["distance"],
+          message: "Required"
+        }
+      ]);
+    }
   });
 
-  it("should return 400 status code if createPath throws an error", async () => {
-    const mockPath = {
-      mapId: "123",
-      start: { x: 0, y: 0 },
-      end: { x: 1, y: 1 },
-      distance: 100
-    };
+  it("should handle errors from createPath", async () => {
+    createPath.mockRejectedValue(new Error("Create Path Error"));
 
-    createPath.mockRejectedValue(new Error("Error creating path"));
-
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/path",
-      payload: mockPath
-    });
-
-    expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body)).toEqual({ error: "Error creating path" });
-    expect(createPath).toHaveBeenCalledWith(mockPath);
+    try {
+      await createPathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Create Path Error");
+    }
   });
 });

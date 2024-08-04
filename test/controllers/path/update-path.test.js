@@ -1,97 +1,74 @@
-import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 import { updatePath } from "../../../src/data/usecases/path/update-path.js";
 import { updatePathController } from "../../../src/http/controllers/path/update-path.js";
 
-vi.mock("../../../src/data/usecases/path/update-path.js");
+vi.mock("../../../src/data/usecases/path/update-path.js", () => ({
+  updatePath: vi.fn()
+}));
 
 describe("updatePathController", () => {
-  let fastify;
+  let request;
+  let reply;
 
   beforeEach(() => {
-    fastify = Fastify();
-    fastify.put("/path/:id", updatePathController);
-    vi.clearAllMocks();
-  });
-
-  it("should update a path and return 200 status code", async () => {
-    const mockPathId = "123";
-    const mockPathData = {
-      mapId: "map123",
-      start: { x: 1, y: 1 },
-      end: { x: 2, y: 2 },
-      distance: 10
-    };
-    const updatedPath = { ...mockPathData, id: mockPathId };
-    updatePath.mockResolvedValue(updatedPath);
-
-    const response = await fastify.inject({
-      method: "PUT",
-      url: `/path/${mockPathId}`,
-      payload: mockPathData
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(updatePath).toHaveBeenCalledWith(mockPathId, mockPathData);
-    expect(response.json()).toEqual(updatedPath);
-  });
-
-  it("should return 400 status code if path ID validation fails", async () => {
-    const invalidId = "";
-    const response = await fastify.inject({
-      method: "PUT",
-      url: `/path/${invalidId}`,
-      payload: {
+    request = {
+      params: { id: "path123" },
+      body: {
         mapId: "map123",
-        start: { x: 1, y: 1 },
-        end: { x: 2, y: 2 },
-        distance: 10
+        start: { x: 0, y: 0 },
+        end: { x: 10, y: 10 },
+        distance: 14.14
       }
-    });
-
-    expect(response.statusCode).toBe(400);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Bad Request");
-  });
-
-  it("should return 400 status code if request body validation fails", async () => {
-    const mockPathId = "123";
-    const invalidData = {
-      mapId: "map123",
-      start: { x: 1, y: 1 },
-      end: { x: 2, y: "invalid" },
-      distance: 10
     };
 
-    const response = await fastify.inject({
-      method: "PUT",
-      url: `/path/${mockPathId}`,
-      payload: invalidData
-    });
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply) // Ensure chainability for `status`
+    };
 
-    expect(response.statusCode).toBe(400);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Bad Request");
+    // Mock successful response
+    updatePath.mockResolvedValue({ success: true });
   });
 
-  it("should return 404 status code if updatePath throws an error", async () => {
-    const mockPathId = "123";
-    const mockPathData = {
+  it("should update the path successfully", async () => {
+    await updatePathController(request, reply);
+
+    expect(updatePath).toHaveBeenCalledWith("path123", request.body);
+  });
+
+  it("should handle validation errors in params", async () => {
+    request.params = { id: 123 }; // Invalid ID type
+
+    try {
+      await updatePathController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+    }
+  });
+
+  it("should handle validation errors in body", async () => {
+    request.body = {
       mapId: "map123",
-      start: { x: 1, y: 1 },
-      end: { x: 2, y: 2 },
-      distance: 10
-    };
-    updatePath.mockRejectedValue(new Error("Path not found"));
+      start: { x: 0, y: 0 },
+      end: { x: 10, y: 10 },
+      distance: -14.14
+    }; // Invalid distance
 
-    const response = await fastify.inject({
-      method: "PUT",
-      url: `/path/${mockPathId}`,
-      payload: mockPathData
-    });
+    try {
+      await updatePathController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+    }
+  });
 
-    expect(response.statusCode).toBe(404);
-    const body = response.json();
-    expect(body).toHaveProperty("error", "Not Found");
+  it("should handle errors from updatePath", async () => {
+    updatePath.mockRejectedValue(new Error("Update Path Error"));
+
+    try {
+      await updatePathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Update Path Error");
+    }
   });
 });

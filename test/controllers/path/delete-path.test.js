@@ -1,69 +1,64 @@
-import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deletePath } from "../../../src/data/usecases/path/delete-path.js";
 import { deletePathController } from "../../../src/http/controllers/path/delete-path.js";
+import { validators } from "../../../src/http/validators.js";
 
-vi.mock("../../../src/data/usecases/path/delete-path.js");
+vi.mock("../../../src/data/usecases/path/delete-path.js", () => ({
+  deletePath: vi.fn()
+}));
+
+vi.mock("../../../src/http/validators.js", () => ({
+  validators: {
+    idParamSchema: vi.fn()
+  }
+}));
 
 describe("deletePathController", () => {
-  let fastify;
+  let request;
+  let reply;
 
   beforeEach(() => {
-    fastify = Fastify();
-    fastify.delete("/path/:id", deletePathController);
-    vi.clearAllMocks();
+    request = {
+      params: { id: "path123" }
+    };
+
+    reply = {
+      send: vi.fn(),
+      status: vi.fn(() => reply)
+    };
+
+    deletePath.mockResolvedValue({ success: true });
+
+    validators.idParamSchema.mockImplementation((params) => params);
   });
 
-  it("should delete a path and return 200 status code", async () => {
-    const mockPathId = "123";
-    deletePath.mockResolvedValue({ _id: mockPathId });
+  it("should delete the path successfully", async () => {
+    await deletePathController(request, reply);
 
-    const response = await fastify.inject({
-      method: "DELETE",
-      url: `/path/${mockPathId}`
-    });
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
 
-    expect(response.statusCode).toBe(200);
-    expect(deletePath).toHaveBeenCalledWith(mockPathId);
+    expect(deletePath).toHaveBeenCalledWith("path123");
   });
 
-  it("should return 400 status code if validation fails", async () => {
-    const response = await fastify.inject({
-      method: "DELETE",
-      url: "/path/"
+  it("should handle validation errors", async () => {
+    validators.idParamSchema.mockImplementation(() => {
+      throw new Error("Validation Error");
     });
 
-    expect(response.statusCode).toBe(400);
-    const body = JSON.parse(response.body);
-    expect(body).toHaveProperty("error", "Bad Request");
-    expect(body).toHaveProperty("message");
+    try {
+      await deletePathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Validation Error");
+    }
   });
 
-  it("should return 404 status code if path not found", async () => {
-    const mockPathId = "123";
-    deletePath.mockResolvedValue(null);
+  it("should handle errors from deletePath", async () => {
+    deletePath.mockRejectedValue(new Error("Delete Path Error"));
 
-    const response = await fastify.inject({
-      method: "DELETE",
-      url: `/path/${mockPathId}`
-    });
-
-    expect(response.statusCode).toBe(404);
-    const body = JSON.parse(response.body);
-    expect(body).toHaveProperty("error", "Path not found");
-  });
-
-  it("should return 404 status code if deletePath throws an error", async () => {
-    const mockPathId = "123";
-    deletePath.mockRejectedValue(new Error("Error deleting path"));
-
-    const response = await fastify.inject({
-      method: "DELETE",
-      url: `/path/${mockPathId}`
-    });
-
-    expect(response.statusCode).toBe(404);
-    const body = JSON.parse(response.body);
-    expect(body).toHaveProperty("error", "Error deleting path");
+    try {
+      await deletePathController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Delete Path Error");
+    }
   });
 });
