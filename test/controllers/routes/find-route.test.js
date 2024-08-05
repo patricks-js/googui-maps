@@ -1,81 +1,75 @@
-import Fastify from "fastify";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { vi } from "vitest";
+import { ZodError } from "zod";
+import { Node } from "../../../src/data/models/node.js";
 import { findBestRouteFromJSON } from "../../../src/data/usecases/route/find-route.js";
 import { findRouteController } from "../../../src/http/controllers/route/find-route.js";
+import { BadRequestError, NotFoundError } from "../../../src/http/errors.js";
 
-vi.mock("../../../src/data/usecases/route/find-route.js");
+vi.mock("../../../src/data/models/node.js", () => ({
+  Node: {
+    create: vi.fn()
+  }
+}));
+
+vi.mock("../../../src/data/usecases/route/find-route.js", () => ({
+  findBestRouteFromJSON: vi.fn()
+}));
 
 describe("findRouteController", () => {
-  let fastify;
+  let request;
+  let reply;
 
   beforeEach(() => {
-    fastify = Fastify();
-    fastify.post("/route", findRouteController);
-    vi.clearAllMocks();
+    request = {
+      body: {
+        map_id: "map1",
+        start_point: { x: 10, y: 20 },
+        stop_points: [{ x: 15, y: 25 }],
+        end_point: { x: 20, y: 30 }
+      }
+    };
+
+    reply = {
+      status: vi.fn().mockReturnThis(),
+      send: vi.fn()
+    };
+
+    findBestRouteFromJSON.mockReset();
+    Node.create.mockReset();
   });
 
-  it("should find the best route and return 200 status code", async () => {
-    const mockRoute = {
-      map_id: "map1",
-      start_point: { x: 0, y: 0 },
-      end_point: { x: 1, y: 1 }
-    };
+  it("should return 200 and a success message when the route is valid and exists", async () => {
+    findBestRouteFromJSON.mockResolvedValue({ optimal_path: [] });
 
-    const mockResult = {
-      optimal_path: [
-        { x: 0, y: 0 },
-        { x: 1, y: 1 }
-      ]
-    };
+    await findRouteController(request, reply);
 
-    findBestRouteFromJSON.mockResolvedValue(mockResult);
-
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/route",
-      payload: mockRoute
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body)).toEqual(mockResult);
-    expect(findBestRouteFromJSON).toHaveBeenCalledWith(mockRoute);
+    expect(findBestRouteFromJSON).toHaveBeenCalledWith(request.body);
+    expect(Node.create).toHaveBeenCalledWith({ optimal_path: [] });
+    expect(reply.status).toHaveBeenCalledWith(200);
   });
 
-  it("should return 400 status code if validation fails", async () => {
-    const invalidRoute = {
+  it("should throw a BadRequestError when the input data is invalid", async () => {
+    request.body = {
       map_id: "map1",
-      start_point: { x: 0, y: 0 }
-      // end_point is missing
+      start_point: { x: 10, y: "20" }, // Invalid type
+      stop_points: [{ x: 15, y: 25 }],
+      end_point: { x: 20, y: 30 }
     };
 
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/route",
-      payload: invalidRoute
-    });
+    await expect(findRouteController(request, reply)).rejects.toThrow(ZodError);
 
-    expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body)).toHaveProperty("error");
     expect(findBestRouteFromJSON).not.toHaveBeenCalled();
+    expect(Node.create).not.toHaveBeenCalled();
   });
 
-  it("should return 400 status code if findBestRouteFromJSON throws an error", async () => {
-    const mockRoute = {
-      map_id: "map1",
-      start_point: { x: 0, y: 0 },
-      end_point: { x: 1, y: 1 }
-    };
+  it("should throw a NotFoundError when the route does not exist", async () => {
+    findBestRouteFromJSON.mockRejectedValue(new NotFoundError("No path found"));
 
-    findBestRouteFromJSON.mockRejectedValue(new Error("Error finding route"));
+    await expect(findRouteController(request, reply)).rejects.toThrow(
+      NotFoundError
+    );
 
-    const response = await fastify.inject({
-      method: "POST",
-      url: "/route",
-      payload: mockRoute
-    });
-
-    expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body)).toEqual({ error: "Error finding route" });
-    expect(findBestRouteFromJSON).toHaveBeenCalledWith(mockRoute);
+    expect(findBestRouteFromJSON).toHaveBeenCalledWith(request.body);
+    expect(Node.create).not.toHaveBeenCalled();
   });
 });

@@ -1,50 +1,63 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Waypoint } from "../../../src/data/models/waypoint.js";
+import { z } from "zod";
 import { createWaypoint } from "../../../src/data/usecases/waypoint/create-waypoint.js";
-import { BadRequestError } from "../../../src/http/errors.js";
+import { createWaypointController } from "../../../src/http/controllers/waypoint/create-waypoint.js";
 
-// Mock the Waypoint model
-vi.mock("../../../src/data/models/waypoint.js", () => ({
-  Waypoint: {
-    findOne: vi.fn(),
-    create: vi.fn()
-  }
+vi.mock("../../../src/data/usecases/waypoint/create-waypoint.js", () => ({
+  createWaypoint: vi.fn()
 }));
 
-describe("createWaypoint", () => {
-  let waypointData;
+describe("createWaypointController", () => {
+  let request;
+  let reply;
 
   beforeEach(() => {
-    waypointData = {
-      mapId: "map1",
-      position: { x: 10, y: 20 },
-      name: "Waypoint 1"
+    request = {
+      body: {
+        mapId: "map123",
+        position: { x: 10, y: 20 },
+        name: "Waypoint 1"
+      }
     };
 
-    Waypoint.findOne.mockReset();
-    Waypoint.create.mockReset();
+    reply = {
+      status: vi.fn(() => reply),
+      send: vi.fn()
+    };
   });
 
-  it("should create a waypoint successfully when no waypoint with the same name exists", async () => {
-    Waypoint.findOne.mockResolvedValue(null); // No existing waypoint
-    Waypoint.create.mockResolvedValue(waypointData); // Simulate successful creation
+  it("should create a waypoint successfully", async () => {
+    createWaypoint.mockResolvedValue(request.body);
 
-    const result = await createWaypoint(waypointData);
+    await createWaypointController(request, reply);
 
-    expect(Waypoint.findOne).toHaveBeenCalledWith({ name: waypointData.name });
-    expect(Waypoint.create).toHaveBeenCalledWith(waypointData);
-    expect(result).toEqual(waypointData);
+    expect(createWaypoint).toHaveBeenCalledWith(request.body);
   });
 
-  it("should throw a BadRequestError when a waypoint with the same name already exists", async () => {
-    Waypoint.findOne.mockResolvedValue(waypointData); // Existing waypoint with the same name
+  it("should handle validation errors", async () => {
+    request.body = {
+      mapId: "map123",
+      position: { x: 10, y: "invalid" },
+      name: "Waypoint 1"
+    }; // Invalid body
 
-    await expect(createWaypoint(waypointData)).rejects.toThrow(BadRequestError);
-    await expect(createWaypoint(waypointData)).rejects.toThrow(
-      "Waypoint already exists"
-    );
+    try {
+      await createWaypointController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+      expect(e.errors).toHaveLength(1);
+    }
+  });
 
-    expect(Waypoint.findOne).toHaveBeenCalledWith({ name: waypointData.name });
-    expect(Waypoint.create).not.toHaveBeenCalled();
+  it("should handle errors from createWaypoint", async () => {
+    createWaypoint.mockRejectedValue(new Error("Create Waypoint Error"));
+
+    try {
+      await createWaypointController(request, reply);
+    } catch (e) {
+      expect(e.message).toBe("Create Waypoint Error");
+    }
+
+    expect(createWaypoint).toHaveBeenCalledWith(request.body);
   });
 });

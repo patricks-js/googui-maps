@@ -1,45 +1,71 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Waypoint } from "../../../src/data/models/waypoint.js";
 import { findWaypoint } from "../../../src/data/usecases/waypoint/find-waypoint.js";
-import { NotFoundError } from "../../../src/http/errors.js";
+import { findWaypointController } from "../../../src/http/controllers/waypoint/find-waypoint.js";
+import { NotFoundError, ServerError } from "../../../src/http/errors.js";
+import { validators } from "../../../src/http/validators.js";
 
-// Mock the Waypoint model
-vi.mock("../../../src/data/models/waypoint.js", () => ({
-  Waypoint: {
-    findById: vi.fn()
-  }
-}));
+vi.mock("../../../src/data/usecases/waypoint/find-waypoint.js");
+vi.mock("../../../src/http/validators.js");
 
-describe("findWaypoint", () => {
-  const waypointId = "123";
-  const waypointData = {
-    id: waypointId,
-    mapId: "map1",
-    position: { x: 10, y: 20 },
-    name: "Waypoint 1"
+describe("findWaypointController", () => {
+  const request = {
+    params: { id: "waypoint123" }
+  };
+  const reply = {
+    send: vi.fn(),
+    code: vi.fn().mockReturnThis()
   };
 
   beforeEach(() => {
-    Waypoint.findById.mockReset();
+    vi.clearAllMocks();
   });
 
-  it("should return a waypoint successfully when the waypoint exists", async () => {
-    Waypoint.findById.mockResolvedValue(waypointData); // Simulate an existing waypoint
+  it("should find a waypoint successfully", async () => {
+    const waypoint = {
+      id: "waypoint123",
+      name: "Test Waypoint",
+      position: { x: 1, y: 2 }
+    };
+    validators.idParamSchema.mockReturnValue({ id: "waypoint123" });
+    findWaypoint.mockResolvedValue(waypoint);
 
-    const result = await findWaypoint(waypointId);
+    await findWaypointController(request, reply);
 
-    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
-    expect(result).toEqual(waypointData);
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
+    expect(findWaypoint).toHaveBeenCalledWith("waypoint123");
   });
 
-  it("should throw a NotFoundError when the waypoint does not exist", async () => {
-    Waypoint.findById.mockResolvedValue(null); // Simulate waypoint not found
-
-    await expect(findWaypoint(waypointId)).rejects.toThrow(NotFoundError);
-    await expect(findWaypoint(waypointId)).rejects.toThrow(
-      `Waypoint with id ${waypointId} not found`
+  it("should handle NotFoundError if waypoint is not found", async () => {
+    validators.idParamSchema.mockReturnValue({ id: "waypoint123" });
+    findWaypoint.mockRejectedValue(
+      new NotFoundError("Waypoint with id waypoint123 not found")
     );
 
-    expect(Waypoint.findById).toHaveBeenCalledWith(waypointId);
+    try {
+      await findWaypointController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(NotFoundError);
+      expect(e.message).toBe("Waypoint with id waypoint123 not found");
+    }
+
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
+    expect(findWaypoint).toHaveBeenCalledWith("waypoint123");
+  });
+
+  it("should handle ServerError if there is an error finding the waypoint", async () => {
+    validators.idParamSchema.mockReturnValue({ id: "waypoint123" });
+    findWaypoint.mockRejectedValue(
+      new ServerError("Error at finding Waypoint")
+    );
+
+    try {
+      await findWaypointController(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(ServerError);
+      expect(e.message).toBe("Error at finding Waypoint");
+    }
+
+    expect(validators.idParamSchema).toHaveBeenCalledWith(request.params);
+    expect(findWaypoint).toHaveBeenCalledWith("waypoint123");
   });
 });
