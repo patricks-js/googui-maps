@@ -15,6 +15,12 @@ export async function verifyMap(mapId, startPoint, destinationPoint) {
   if (!verifyIfPointExists(map, destinationPoint)) {
     throw new NotFoundError("Destination point not found");
   }
+
+  if (!map.obstacles) {
+    throw new NotFoundError(
+      "Map settings do not include obstacles or waypoints"
+    );
+  }
 }
 
 export function verifyIfPointExists(map, position) {
