@@ -239,11 +239,11 @@ export const verifyIdMapSchema = {
       200: {
         type: "object",
         properties: {
-          description: { type: "string" }
+          message: { type: "string" }
         }
       }
     },
-    params: {
+    body: {
       type: "object",
       required: ["id"],
       properties: {

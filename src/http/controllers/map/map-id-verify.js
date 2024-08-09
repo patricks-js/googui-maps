@@ -1,3 +1,4 @@
+import { verifyMapId } from "../../../data/usecases/map/map-id-verify.js";
 import { validators } from "../../validators.js";
 
 /**
@@ -5,6 +6,7 @@ import { validators } from "../../validators.js";
  * @param {import("fastify").FastifyReply} reply
  */
 export function verifyMapIdController(request, reply) {
-  validators.idParamSchema(request.body);
-  return { message: "O formato do ID do mapa é válido." };
+  const { id } = validators.idParamSchema(request.body);
+  console.log("IDDDDDDDDDDDDDD", id);
+  return verifyMapId(id);
 }
