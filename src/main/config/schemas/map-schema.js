@@ -231,3 +231,24 @@ export const checkMapConfiguration = {
     }
   }
 };
+
+export const verifyIdMapSchema = {
+  schema: {
+    tags: ["map"],
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          description: { type: "string" }
+        }
+      }
+    },
+    params: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string" }
+      }
+    }
+  }
+};
