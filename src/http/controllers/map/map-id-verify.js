@@ -6,7 +6,6 @@ import { validators } from "../../validators.js";
  * @param {import("fastify").FastifyReply} reply
  */
 export function verifyMapIdController(request, reply) {
-  console.log("iDDDDDDDDDDDDDDDDDDDDDDDDD", request.body);
   const { id } = validators.idParamSchema(request.body);
   return verifyMapId(id);
 }

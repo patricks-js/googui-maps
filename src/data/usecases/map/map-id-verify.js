@@ -1,7 +1,7 @@
 import { Maps } from "../../models/map.js";
 
 export function verifyMapId(mapId) {
-  if (!Maps.findById(mapId)) {
+  if (!mapId) {
     return { error: "Formato de ID do mapa inválido." };
   }
 
