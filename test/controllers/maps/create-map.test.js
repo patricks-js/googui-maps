@@ -60,6 +60,113 @@ describe("createMapControllers", () => {
     });
   });
 
+  it("should handle validation errors for exceeding dimensions", async () => {
+    request.body.dimensions = { width: 600, height: 600 }; // Invalid dimensions
+
+    const parseSpy = vi.spyOn(mapSchema, "parse").mockImplementation(() => {
+      throw new z.ZodError([
+        {
+          code: "too_big",
+          maximum: 500,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be less than or equal to 500",
+          path: ["dimensions", "width"]
+        },
+        {
+          code: "too_big",
+          maximum: 500,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be less than or equal to 500",
+          path: ["dimensions", "height"]
+        }
+      ]);
+    });
+
+    try {
+      await createMapControllers(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+      expect(e.errors).toEqual([
+        {
+          code: "too_big",
+          maximum: 500,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be less than or equal to 500",
+          path: ["dimensions", "width"]
+        },
+        {
+          code: "too_big",
+          maximum: 500,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be less than or equal to 500",
+          path: ["dimensions", "height"]
+        }
+      ]);
+    }
+    parseSpy.mockRestore();
+  });
+
+  it("should handle validation errors for dimensions less than minimum", async () => {
+    request.body.dimensions = { width: 0, height: 0 };
+    const parseSpy = vi.spyOn(mapSchema, "parse").mockImplementation(() => {
+      throw new z.ZodError([
+        {
+          code: "too_small",
+          minimum: 1,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be greater than or equal to 1",
+          path: ["dimensions", "width"]
+        },
+        {
+          code: "too_small",
+          minimum: 1,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be greater than or equal to 1",
+          path: ["dimensions", "height"]
+        }
+      ]);
+    });
+
+    try {
+      await createMapControllers(request, reply);
+    } catch (e) {
+      expect(e).toBeInstanceOf(z.ZodError);
+      expect(e.errors).toEqual([
+        {
+          code: "too_small",
+          minimum: 1,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be greater than or equal to 1",
+          path: ["dimensions", "width"]
+        },
+        {
+          code: "too_small",
+          minimum: 1,
+          type: "number",
+          inclusive: true,
+          exact: false,
+          message: "Number must be greater than or equal to 1",
+          path: ["dimensions", "height"]
+        }
+      ]);
+    }
+    parseSpy.mockRestore();
+  });
+
   it("should handle validation errors", async () => {
     request.body = {}; // Invalid body
     const parseSpy = vi.spyOn(mapSchema, "parse").mockImplementation(() => {

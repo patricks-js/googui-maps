@@ -19,11 +19,11 @@ describe("updateUserController", () => {
 
   beforeEach(() => {
     request = {
-      params: { id: "user123" },
+      params: { id: "66b6774920ed1fbdf7609d13" },
       body: {
         username: "testuser",
         email: "test@example.com",
-        _id: "user123"
+        _id: "66b6774920ed1fbdf7609d13"
       }
     };
 
@@ -38,10 +38,10 @@ describe("updateUserController", () => {
 
     await updateUserController(request, reply);
 
-    expect(updateUser).toHaveBeenCalledWith("user123", {
+    expect(updateUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13", {
       username: "testuser",
       email: "test@example.com",
-      _id: "user123"
+      _id: "66b6774920ed1fbdf7609d13"
     });
   });
 
@@ -65,10 +65,10 @@ describe("updateUserController", () => {
       expect(e.message).toBe("Update User Error");
     }
 
-    expect(updateUser).toHaveBeenCalledWith("user123", {
+    expect(updateUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13", {
       username: "testuser",
       email: "test@example.com",
-      _id: "user123"
+      _id: "66b6774920ed1fbdf7609d13"
     });
   });
 });
