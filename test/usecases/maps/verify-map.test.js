@@ -102,6 +102,24 @@ describe("verifyIfPointExists", () => {
     expect(result).toBe(true);
   });
 
+  it("should return an error message if map don't have obstacle", async () => {
+    const mapId = "66b6774920ed1fbdf7609d13";
+    const startPoint = { x: 10, y: 10 };
+    const destinationPoint = { x: 1000, y: 1000 }; // Out of map bounds
+    const map = {
+      dimensions: {
+        width: 100,
+        height: 100
+      }
+    };
+
+    Maps.findById.mockResolvedValue(map);
+
+    await expect(
+      verifyMap(mapId, startPoint, destinationPoint)
+    ).rejects.toThrow("Map settings do not include obstacles or waypoints");
+  });
+
   it("should return false if the point is out of map dimensions", () => {
     const map = {
       dimensions: {
