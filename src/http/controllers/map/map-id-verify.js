@@ -7,6 +7,5 @@ import { validators } from "../../validators.js";
  */
 export function verifyMapIdController(request, reply) {
   const { id } = validators.idParamSchema(request.body);
-  console.log("IDDDDDDDDDDDDDD", id);
   return verifyMapId(id);
 }
