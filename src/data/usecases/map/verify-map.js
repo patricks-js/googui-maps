@@ -17,9 +17,7 @@ export async function verifyMap(mapId, startPoint, destinationPoint) {
   }
 
   if (!map.obstacles) {
-    throw new NotFoundError(
-      "Map settings do not include obstacles or waypoints"
-    );
+    throw new NotFoundError("Map settings do not include obstacles");
   }
 }
 
