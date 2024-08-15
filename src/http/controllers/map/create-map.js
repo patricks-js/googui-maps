@@ -4,8 +4,8 @@ import { createMap } from "../../../data/usecases/map/create-map.js";
 const mapSchema = z.object({
   name: z.string(),
   dimensions: z.object({
-    width: z.number(),
-    height: z.number()
+    width: z.number().min(1).max(500),
+    height: z.number().min(1).max(500)
   }),
   obstacles: z.array(z.object({ x: z.number(), y: z.number() }))
 });

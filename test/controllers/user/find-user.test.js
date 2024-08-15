@@ -18,7 +18,7 @@ describe("findUserController", () => {
 
   beforeEach(() => {
     request = {
-      params: { id: "user123" }
+      params: { id: "66b6774920ed1fbdf7609d13" }
     };
 
     reply = {
@@ -27,11 +27,11 @@ describe("findUserController", () => {
   });
 
   it("should find the user successfully", async () => {
-    const user = { id: "user123", name: "Test User" };
+    const user = { id: "66b6774920ed1fbdf7609d13", name: "Test User" };
     findUser.mockResolvedValue(user);
 
     await findUserController(request, reply);
-    expect(findUser).toHaveBeenCalledWith("user123");
+    expect(findUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13");
   });
 
   it("should handle errors from findUser", async () => {
@@ -42,6 +42,6 @@ describe("findUserController", () => {
     } catch (e) {
       expect(e.message).toBe("Find User Error");
     }
-    expect(findUser).toHaveBeenCalledWith("user123");
+    expect(findUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13");
   });
 });

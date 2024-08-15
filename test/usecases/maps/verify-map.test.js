@@ -17,7 +17,7 @@ describe("verifyMap", () => {
   });
 
   it("should throw an error if the map is not found", async () => {
-    const mapId = "1234";
+    const mapId = "66b6774920ed1fbdf7609d13";
     const startPoint = { x: 10, y: 10 };
     const destinationPoint = { x: 20, y: 20 };
 
@@ -29,7 +29,7 @@ describe("verifyMap", () => {
   });
 
   it("should throw an error if the start point is not valid", async () => {
-    const mapId = "1234";
+    const mapId = "66b6774920ed1fbdf7609d13";
     const startPoint = { x: 1000, y: 1000 }; // Out of map bounds
     const destinationPoint = { x: 20, y: 20 };
     const map = {
@@ -48,7 +48,7 @@ describe("verifyMap", () => {
   });
 
   it("should throw an error if the destination point is not valid", async () => {
-    const mapId = "1234";
+    const mapId = "66b6774920ed1fbdf7609d13";
     const startPoint = { x: 10, y: 10 };
     const destinationPoint = { x: 1000, y: 1000 }; // Out of map bounds
     const map = {
@@ -67,7 +67,7 @@ describe("verifyMap", () => {
   });
 
   it("should pass if both start and destination points are valid", async () => {
-    const mapId = "1234";
+    const mapId = "66b6774920ed1fbdf7609d13";
     const startPoint = { x: 10, y: 10 };
     const destinationPoint = { x: 20, y: 20 };
     const map = {
@@ -100,6 +100,24 @@ describe("verifyIfPointExists", () => {
     const result = verifyIfPointExists(map, point);
 
     expect(result).toBe(true);
+  });
+
+  it("should return an error message if map don't have obstacle", async () => {
+    const mapId = "66b6774920ed1fbdf7609d13";
+    const startPoint = { x: 10, y: 10 };
+    const destinationPoint = { x: 8, y: 8 }; // Out of map bounds
+    const map = {
+      dimensions: {
+        width: 100,
+        height: 100
+      }
+    };
+
+    Maps.findById.mockResolvedValue(map);
+
+    await expect(
+      verifyMap(mapId, startPoint, destinationPoint)
+    ).rejects.toThrow("Map settings do not include obstacles");
   });
 
   it("should return false if the point is out of map dimensions", () => {

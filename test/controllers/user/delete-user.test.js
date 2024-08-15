@@ -18,7 +18,7 @@ describe("deleteUserController", () => {
 
   beforeEach(() => {
     request = {
-      params: { id: "user123" }
+      params: { id: "66b6774920ed1fbdf7609d13" }
     };
 
     reply = {
@@ -32,7 +32,7 @@ describe("deleteUserController", () => {
 
     await deleteUserController(request, reply);
 
-    expect(deleteUser).toHaveBeenCalledWith("user123");
+    expect(deleteUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13");
   });
 
   it("should handle errors from deleteUser", async () => {
@@ -44,6 +44,6 @@ describe("deleteUserController", () => {
       expect(e.message).toBe("Delete User Error");
     }
 
-    expect(deleteUser).toHaveBeenCalledWith("user123");
+    expect(deleteUser).toHaveBeenCalledWith("66b6774920ed1fbdf7609d13");
   });
 });

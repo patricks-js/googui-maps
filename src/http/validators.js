@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
 export const validators = {
   idParamSchema: (id) => {
     const schema = z.object({
-      id: z.string()
+      id: z.string().refine((value) => objectIdRegex.test(value))
     });
 
     return schema.parse(id);

@@ -21,7 +21,7 @@ async function findBestRoute(map, startPoint, endPoint, stopPoints = []) {
     fullPath = fullPath.concat(segmentPath.slice(0, -1)); // Avoid duplicating the end points
   }
 
-  fullPath.push(endPoint); // Add the final end point
+  fullPath.push(endPoint);
 
   return { optimal_path: fullPath };
 }
