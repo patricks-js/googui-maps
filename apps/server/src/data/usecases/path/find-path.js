@@ -1,5 +1,5 @@
-import { Path } from '../../../data/models/path.js'
 import { ServerError } from '../../../http/errors.js'
+import { Path } from '../../models/path.js'
 
 export async function findPath(id) {
   const path = await Path.findById(id)

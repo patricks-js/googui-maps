@@ -1,0 +1,37 @@
+{
+  "name": "@maps/server",
+  "private": true,
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "pnpm env:load node src/main/server.js",
+    "dev": "pnpm env:load node --watch src/main/server.js",
+    "lint": "biome lint .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest dev",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "services:up": "pnpm run docker:compose up -d",
+    "services:stop": "pnpm run docker:compose stop",
+    "services:down": "pnpm run docker:compose down",
+    "docker:compose": "docker-compose -f ../../docker-compose.yaml",
+    "env:load": "dotenv -e .env.development --"
+  },
+  "dependencies": {
+    "@fastify/cors": "9.0.1",
+    "@fastify/swagger": "8.15.0",
+    "@scalar/fastify-api-reference": "1.24.69",
+    "fastify": "4.28.1",
+    "fastify-plugin": "4.5.1",
+    "mongoose": "8.5.2",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "2.0.5",
+    "@vitest/ui": "2.0.5",
+    "dotenv-cli": "7.4.2",
+    "supertest": "7.0.0",
+    "vitest": "2.0.5"
+  }
+}
