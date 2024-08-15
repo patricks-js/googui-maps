@@ -1,0 +1,9 @@
+{
+  // * List of extensions which should be recommended for users of this workspace.
+  "recommendations": [
+    "biomejs.biome",
+    "davidanson.vscode-markdownlint",
+    "eamodio.gitlens",
+    "aaron-bond.better-comments"
+  ]
+}

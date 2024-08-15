@@ -1,11 +1,11 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     coverage: {
-      provider: "istanbul",
-      reporter: ["json", "html"]
+      provider: 'istanbul',
+      reporter: ['json', 'html'],
     },
-    globals: true
-  }
-});
+    globals: true,
+  },
+})
