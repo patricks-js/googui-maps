@@ -1,4 +1,4 @@
-import { checkMapConfiguration } from "../../../data/usecases/map/check-map-config.js";
+import { checkMapConfiguration } from '../../../data/usecases/map/check-map-config.js'
 
 /**
  *
@@ -6,7 +6,7 @@ import { checkMapConfiguration } from "../../../data/usecases/map/check-map-conf
  * @param {import("fastify").FastifyReply} reply
  */
 export async function checkMapController(request, reply) {
-  const { map_id: mapId } = request.body;
+  const { map_id: mapId } = request.body
 
-  return checkMapConfiguration(mapId);
+  return checkMapConfiguration(mapId)
 }

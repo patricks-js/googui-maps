@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose from 'mongoose'
+const { Schema } = mongoose
 
 const mapSchema = new Schema(
   {
@@ -7,11 +7,11 @@ const mapSchema = new Schema(
     position: {
       x: { type: Number, required: true },
       y: { type: Number, required: true },
-      _id: false
+      _id: false,
     },
-    size: { type: Number, required: true }
+    size: { type: Number, required: true },
   },
-  { versionKey: false }
-);
+  { versionKey: false },
+)
 
-export const Obstacle = mongoose.model("Obstacle", mapSchema);
+export const Obstacle = mongoose.model('Obstacle', mapSchema)

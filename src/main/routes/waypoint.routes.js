@@ -1,13 +1,13 @@
-import { createWaypointController } from "../../http/controllers/waypoint/create-waypoint.js";
-import { deleteWaypointController } from "../../http/controllers/waypoint/delete-waypoint.js";
-import { findWaypointController } from "../../http/controllers/waypoint/find-waypoint.js";
-import { updateWaypointController } from "../../http/controllers/waypoint/update-waypoint.js";
+import { createWaypointController } from '../../http/controllers/waypoint/create-waypoint.js'
+import { deleteWaypointController } from '../../http/controllers/waypoint/delete-waypoint.js'
+import { findWaypointController } from '../../http/controllers/waypoint/find-waypoint.js'
+import { updateWaypointController } from '../../http/controllers/waypoint/update-waypoint.js'
 import {
   waypointDeleteSchema,
   waypointGetSchema,
   waypointPostSchema,
-  waypointPutSchema
-} from "../config/schemas/waypoint-schema.js";
+  waypointPutSchema,
+} from '../config/schemas/waypoint-schema.js'
 
 /**
  *
@@ -15,8 +15,8 @@ import {
  */
 
 export async function waypointsRoutes(app) {
-  app.post("/", waypointPostSchema, createWaypointController);
-  app.get("/:id", waypointGetSchema, findWaypointController);
-  app.put("/:id", waypointPutSchema, updateWaypointController);
-  app.delete("/:id", waypointDeleteSchema, deleteWaypointController);
+  app.post('/', waypointPostSchema, createWaypointController)
+  app.get('/:id', waypointGetSchema, findWaypointController)
+  app.put('/:id', waypointPutSchema, updateWaypointController)
+  app.delete('/:id', waypointDeleteSchema, deleteWaypointController)
 }

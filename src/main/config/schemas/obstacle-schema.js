@@ -1,130 +1,130 @@
 export const obstaclePostSchema = {
   schema: {
-    tags: ["obstacle"],
+    tags: ['obstacle'],
     response: {
       201: {
-        description: "Obstacle created successfully",
-        type: "object",
+        description: 'Obstacle created successfully',
+        type: 'object',
         properties: {
-          _id: { type: "string" },
-          mapId: { type: "string" },
+          _id: { type: 'string' },
+          mapId: { type: 'string' },
           position: {
-            type: "object",
+            type: 'object',
             properties: {
-              x: { type: "number" },
-              y: { type: "number" }
-            }
+              x: { type: 'number' },
+              y: { type: 'number' },
+            },
           },
-          size: { type: "number" }
-        }
-      }
+          size: { type: 'number' },
+        },
+      },
     },
     body: {
-      type: "object",
-      required: ["mapId", "position", "size"],
+      type: 'object',
+      required: ['mapId', 'position', 'size'],
       properties: {
-        mapId: { type: "string" },
+        mapId: { type: 'string' },
         position: {
-          type: "object",
-          required: ["x", "y"],
+          type: 'object',
+          required: ['x', 'y'],
           properties: {
-            x: { type: "number" },
-            y: { type: "number" }
-          }
+            x: { type: 'number' },
+            y: { type: 'number' },
+          },
         },
-        size: { type: "number" }
-      }
-    }
-  }
-};
+        size: { type: 'number' },
+      },
+    },
+  },
+}
 
 export const obstacleGetSchema = {
   schema: {
-    tags: ["obstacle"],
+    tags: ['obstacle'],
     response: {
       200: {
-        description: "Obstacle found successfully",
-        type: "object",
+        description: 'Obstacle found successfully',
+        type: 'object',
         properties: {
-          _id: { type: "string" },
-          mapId: { type: "string" },
+          _id: { type: 'string' },
+          mapId: { type: 'string' },
           position: {
-            type: "object",
+            type: 'object',
             properties: {
-              x: { type: "number" },
-              y: { type: "number" }
-            }
+              x: { type: 'number' },
+              y: { type: 'number' },
+            },
           },
-          size: { type: "number" }
-        }
-      }
+          size: { type: 'number' },
+        },
+      },
     },
     params: {
-      type: "object",
-      required: ["id"],
+      type: 'object',
+      required: ['id'],
       properties: {
-        id: { type: "string" }
-      }
-    }
-  }
-};
+        id: { type: 'string' },
+      },
+    },
+  },
+}
 
 export const obstacleDeleteSchema = {
   schema: {
-    tags: ["obstacle"],
+    tags: ['obstacle'],
     response: { 204: {} },
     params: {
-      type: "object",
-      required: ["id"],
+      type: 'object',
+      required: ['id'],
       properties: {
-        id: { type: "string" }
-      }
-    }
-  }
-};
+        id: { type: 'string' },
+      },
+    },
+  },
+}
 
 export const obstaclePutSchema = {
   schema: {
-    tags: ["obstacle"],
+    tags: ['obstacle'],
     response: {
       200: {
-        description: "Obstacle updated successfully",
-        type: "object",
+        description: 'Obstacle updated successfully',
+        type: 'object',
         properties: {
-          _id: { type: "string" },
-          mapId: { type: "string" },
+          _id: { type: 'string' },
+          mapId: { type: 'string' },
           position: {
-            type: "object",
+            type: 'object',
             properties: {
-              x: { type: "number" },
-              y: { type: "number" }
-            }
+              x: { type: 'number' },
+              y: { type: 'number' },
+            },
           },
-          size: { type: "number" }
-        }
-      }
+          size: { type: 'number' },
+        },
+      },
     },
     params: {
-      type: "object",
-      required: ["id"],
+      type: 'object',
+      required: ['id'],
       properties: {
-        id: { type: "string" }
-      }
+        id: { type: 'string' },
+      },
     },
     body: {
-      type: "object",
-      required: ["mapId", "position", "size"],
+      type: 'object',
+      required: ['mapId', 'position', 'size'],
       properties: {
-        mapId: { type: "string" },
+        mapId: { type: 'string' },
         position: {
-          type: "object",
-          required: ["x", "y"],
+          type: 'object',
+          required: ['x', 'y'],
           properties: {
-            x: { type: "number" },
-            y: { type: "number" }
-          }
-        }
-      }
-    }
-  }
-};
+            x: { type: 'number' },
+            y: { type: 'number' },
+          },
+        },
+      },
+    },
+  },
+}

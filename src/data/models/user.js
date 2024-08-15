@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose from 'mongoose'
+const { Schema } = mongoose
 
 const userSchema = new Schema(
   {
     username: String,
-    email: String
+    email: String,
   },
-  { versionKey: false }
-);
+  { versionKey: false },
+)
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model('User', userSchema)

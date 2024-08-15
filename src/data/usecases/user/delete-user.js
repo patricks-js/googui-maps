@@ -1,16 +1,16 @@
-import { NotFoundError, ServerError } from "../../../http/errors.js";
-import { User } from "../../models/user.js";
+import { NotFoundError, ServerError } from '../../../http/errors.js'
+import { User } from '../../models/user.js'
 
 export async function deleteUser(id) {
-  const userExists = await User.findById(id);
+  const userExists = await User.findById(id)
 
   if (!userExists) {
-    throw new NotFoundError(`User with id ${id} not found`);
+    throw new NotFoundError(`User with id ${id} not found`)
   }
 
   try {
-    await User.findByIdAndDelete(id);
+    await User.findByIdAndDelete(id)
   } catch (error) {
-    throw new ServerError(error.message);
+    throw new ServerError(error.message)
   }
 }

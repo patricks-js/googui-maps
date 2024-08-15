@@ -1,77 +1,77 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { Maps } from "../../../src/data/models/map.js";
-import { updateMap } from "../../../src/data/usecases/map/update-map.js";
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { Maps } from '../../../src/data/models/map.js'
+import { updateMap } from '../../../src/data/usecases/map/update-map.js'
 
-vi.mock("../../../src/data/models/map.js", () => ({
+vi.mock('../../../src/data/models/map.js', () => ({
   Maps: {
-    findByIdAndUpdate: vi.fn()
-  }
-}));
+    findByIdAndUpdate: vi.fn(),
+  },
+}))
 
-describe("updateMap", () => {
+describe('updateMap', () => {
   afterEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
-  it("should update an existing map", async () => {
-    const id = "1234";
+  it('should update an existing map', async () => {
+    const id = '1234'
     const newMap = {
-      name: "Updated Map",
+      name: 'Updated Map',
       dimensions: {
         width: 200,
-        height: 200
+        height: 200,
       },
       obstacles: [
         { x: 15, y: 15 },
-        { x: 25, y: 25 }
-      ]
-    };
+        { x: 25, y: 25 },
+      ],
+    }
 
     const updatedMap = {
-      id: "1234",
-      name: "Updated Map",
+      id: '1234',
+      name: 'Updated Map',
       dimensions: {
         width: 200,
-        height: 200
+        height: 200,
       },
       obstacles: [
         { x: 15, y: 15 },
-        { x: 25, y: 25 }
-      ]
-    };
+        { x: 25, y: 25 },
+      ],
+    }
 
-    Maps.findById = vi.fn().mockResolvedValue(id);
-    Maps.findByIdAndUpdate = vi.fn().mockResolvedValue(updatedMap);
+    Maps.findById = vi.fn().mockResolvedValue(id)
+    Maps.findByIdAndUpdate = vi.fn().mockResolvedValue(updatedMap)
 
-    const result = await updateMap(id, newMap);
+    const result = await updateMap(id, newMap)
 
     expect(Maps.findByIdAndUpdate).toHaveBeenCalledWith(id, newMap, {
-      new: true
-    });
-    expect(result).toEqual(updatedMap);
-  });
+      new: true,
+    })
+    expect(result).toEqual(updatedMap)
+  })
 
-  it("should throw an error when update fails", async () => {
-    const id = "1234";
+  it('should throw an error when update fails', async () => {
+    const id = '1234'
     const newMap = {
-      name: "Updated Map",
+      name: 'Updated Map',
       dimensions: {
         width: 200,
-        height: 200
+        height: 200,
       },
       obstacles: [
         { x: 15, y: 15 },
-        { x: 25, y: 25 }
-      ]
-    };
-    const errorMessage = "Error updating map";
+        { x: 25, y: 25 },
+      ],
+    }
+    const errorMessage = 'Error updating map'
 
-    Maps.findByIdAndUpdate.mockRejectedValue(new Error(errorMessage));
+    Maps.findByIdAndUpdate.mockRejectedValue(new Error(errorMessage))
 
-    await expect(updateMap(id, newMap)).rejects.toThrow(errorMessage);
+    await expect(updateMap(id, newMap)).rejects.toThrow(errorMessage)
 
     expect(Maps.findByIdAndUpdate).toHaveBeenCalledWith(id, newMap, {
-      new: true
-    });
-  });
-});
+      new: true,
+    })
+  })
+})

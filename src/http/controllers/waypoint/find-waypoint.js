@@ -1,5 +1,5 @@
-import { findWaypoint } from "../../../data/usecases/waypoint/find-waypoint.js";
-import { validators } from "../../validators.js";
+import { findWaypoint } from '../../../data/usecases/waypoint/find-waypoint.js'
+import { validators } from '../../validators.js'
 
 /**
  *
@@ -8,7 +8,7 @@ import { validators } from "../../validators.js";
  */
 
 export async function findWaypointController(request, reply) {
-  const { id } = validators.idParamSchema(request.params);
+  const { id } = validators.idParamSchema(request.params)
 
-  return findWaypoint(id);
+  return findWaypoint(id)
 }

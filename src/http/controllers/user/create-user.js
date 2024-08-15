@@ -1,11 +1,11 @@
-import { z } from "zod";
-import { createUser } from "../../../data/usecases/user/create-user.js";
+import { z } from 'zod'
+import { createUser } from '../../../data/usecases/user/create-user.js'
 
 const userSchema = z.object({
   username: z.string(),
   email: z.string().email(),
-  _id: z.string()
-});
+  _id: z.string(),
+})
 
 /**
  *
@@ -13,7 +13,7 @@ const userSchema = z.object({
  * @param {import("fastify").FastifyReply} reply
  */
 export async function createUserController(request, reply) {
-  const body = userSchema.parse(request.body);
+  const body = userSchema.parse(request.body)
 
-  return createUser(body);
+  return createUser(body)
 }

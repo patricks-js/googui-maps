@@ -1,13 +1,13 @@
-import fastifyScalar from "@scalar/fastify-api-reference";
-import fastifyPlugin from "fastify-plugin";
+import fastifyScalar from '@scalar/fastify-api-reference'
+import fastifyPlugin from 'fastify-plugin'
 
 export const scalarUi = fastifyPlugin(async (app) => {
   app.register(fastifyScalar, {
-    routePrefix: "/docs",
+    routePrefix: '/docs',
     configuration: {
       spec: {
-        content: () => app.swagger()
-      }
-    }
-  });
-});
+        content: () => app.swagger(),
+      },
+    },
+  })
+})

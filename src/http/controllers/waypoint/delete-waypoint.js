@@ -1,5 +1,5 @@
-import { deleteWaypoint } from "../../../data/usecases/waypoint/delete-waypoint.js";
-import { validators } from "../../validators.js";
+import { deleteWaypoint } from '../../../data/usecases/waypoint/delete-waypoint.js'
+import { validators } from '../../validators.js'
 
 /**
  *
@@ -8,8 +8,8 @@ import { validators } from "../../validators.js";
  */
 
 export async function deleteWaypointController(request, reply) {
-  const { id } = validators.idParamSchema(request.params);
-  await deleteWaypoint(id);
+  const { id } = validators.idParamSchema(request.params)
+  await deleteWaypoint(id)
 
-  return reply.status(204).send();
+  return reply.status(204).send()
 }
