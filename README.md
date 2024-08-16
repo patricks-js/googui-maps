@@ -125,33 +125,33 @@ This project is a simple maps application, that gives a simple solution to find 
 #### Map
 
 - POST `/api/maps`
-- GET `/api/maps/:mapId`
-- PUT `/api/maps/:mapId`
-- DELETE `/api/maps/:mapId`
+- GET `/api/maps/:id`
+- PUT `/api/maps/:id`
+- DELETE `/api/maps/:id`
 
 #### Obstacle
 
-- POST `/api/maps/:mapId/obstacles`
-- GET `/api/maps/:mapId/obstacles`
-- PUT `/api/maps/:mapId/obstacles/:obstacleId`
-- DELETE `/api/maps/:mapId/obstacles/:obstacleId`
+- POST `/api/maps/:id/obstacles`
+- GET `/api/maps/:id/obstacles`
+- PUT `/api/maps/:id/obstacles/:id`
+- DELETE `/api/maps/:id/obstacles/:id`
 
 #### Waypoint
 
-- POST `/api/maps/:mapId/waypoints`
-- GET `/api/maps/:mapId/waypoints`
-- PUT `/api/maps/:mapId/waypoints/:waypointId`
-- DELETE `/api/maps/:mapId/waypoints/:waypointId`
+- POST `/api/maps/:id/waypoints`
+- GET `/api/maps/:id/waypoints`
+- PUT `/api/maps/:id/waypoints/:id`
+- DELETE `/api/maps/:id/waypoints/:id`
 
 #### Route
 
-- POST `/api/maps/:mapId/routes`
-- GET `/api/maps/:mapId/routes/:routeId`
-- DELETE `/api/maps/:mapId/routes/:routeId`
+- POST `/api/maps/:id/routes`
+- GET `/api/maps/:id/routes/:id`
+- DELETE `/api/maps/:id/routes/:id`
 
 #### User
 
 - POST `/api/users`
-- GET `/api/users/:userId`
-- PUT `/api/users/:userId`
-- DELETE `/api/users/:userId` # Also deletes all maps associated
+- GET `/api/users/:id`
+- PUT `/api/users/:id`
+- DELETE `/api/users/:id` # Also deletes all maps associated
