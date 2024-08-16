@@ -1,16 +1,19 @@
 import { ZodError } from 'zod'
-import {
-  BadRequestError,
-  NotFoundError,
-  ServerError,
-} from '../../http/errors.js'
-import { badRequest, notFound, serverError } from '../../http/http-helpers.js'
+import { BadRequestError, NotFoundError, ServerError } from '../http/errors.js'
+import { badRequest, notFound, serverError } from '../http/http-helpers.js'
 
+/**
+ *
+ * @param {import('fastify').FastifyError} error
+ * @param {import('fastify').FastifyRequest} request
+ * @param {import('fastify').FastifyReply} reply
+ * @returns
+ */
 export async function errorHandler(error, request, reply) {
   if (error instanceof ZodError) {
     return reply.status(400).send(
       badRequest({
-        message: 'Error validating request body',
+        message: 'Validation Error',
         errors: error.flatten().fieldErrors,
       }),
     )
@@ -20,7 +23,7 @@ export async function errorHandler(error, request, reply) {
     return reply.status(400).send(
       badRequest({
         message: error.message,
-        errors: error.details || [],
+        errors: error.stack || [],
       }),
     )
   }

@@ -16,5 +16,12 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   },
-  "cSpell.words": ["Autoload", "biomejs", "fastify", "googui", "openapi"]
+  "cSpell.words": [
+    "autoload",
+    "Autoload",
+    "biomejs",
+    "fastify",
+    "googui",
+    "openapi"
+  ]
 }
