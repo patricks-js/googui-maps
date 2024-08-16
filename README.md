@@ -131,23 +131,23 @@ This project is a simple maps application, that gives a simple solution to find 
 
 #### Obstacle
 
-- POST `/api/map/:mapId/obstacles`
-- GET `/api/map/:mapId/obstacles`
+- POST `/api/maps/:mapId/obstacles`
+- GET `/api/maps/:mapId/obstacles`
 - PUT `/api/obstacles/:obstacleId`
-- DELETE `/api/map/:mapId/obstacles/:obstacleId`
+- DELETE `/api/maps/:mapId/obstacles/:obstacleId`
 
 #### Waypoint
 
-- POST `/api/map/:mapId/waypoints`
-- GET `/api/map/:mapId/waypoints`
+- POST `/api/maps/:mapId/waypoints`
+- GET `/api/maps/:mapId/waypoints`
 - PUT `/api/waypoints/:waypointId`
-- DELETE `/api/map/:mapId/waypoints/:waypointId`
+- DELETE `/api/maps/:mapId/waypoints/:waypointId`
 
 #### Route
 
-- POST `/api/map/:mapId/routes`
-- GET `/api/map/:mapId/routes/:routeId`
-- DELETE `/api/map/:mapId/routes/:routeId`
+- POST `/api/maps/:mapId/routes`
+- GET `/api/maps/:mapId/routes/:routeId`
+- DELETE `/api/maps/:mapId/routes/:routeId`
 
 #### User
 
