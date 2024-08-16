@@ -1,16 +1,27 @@
 import { join } from 'node:path'
+import autoload from '@fastify/autoload'
 import fastify from 'fastify'
 import { errorHandler } from './error-handler.js'
 
-export const app = fastify()
-
-app.register(import('@fastify/autoload'), {
-  dir: join(import.meta.dirname, '..', 'plugins'),
+export const app = fastify({
+  logger: {
+    transport: {
+      target: 'pino-pretty',
+    },
+  },
 })
 
-// app.register(fastifyAutoload, {
-//   dir: join(_dirname, '..', 'routes'),
-//   options: { prefix: '/api' },
-// })
+const srcDir = join(import.meta.dirname, '..')
+
+app.register(autoload, {
+  dir: join(srcDir, 'plugins'),
+})
+
+app.register(autoload, {
+  dir: join(srcDir, 'routes'),
+  options: { prefix: '/api' },
+  routeParams: true,
+  ignorePattern: /^.*(?:test|spec).js$/,
+})
 
 app.setErrorHandler(errorHandler)

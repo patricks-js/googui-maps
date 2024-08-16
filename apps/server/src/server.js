@@ -8,13 +8,10 @@ const host = '0.0.0.0'
 
 try {
   await mongoose.connect(env.DATABASE_URL)
-  console.info('🔥 Connected to MongoDB')
 
   await app.listen({ port, host })
-  console.info(
-    `🚀 HTTP Server Running! Docs available at http://${host}:${port}/docs`,
-  )
+  app.log.info(`Docs available at http://${host}:${port}/docs`)
 } catch (err) {
-  console.error(err)
+  app.log.error(err)
   process.exit(1)
 }
