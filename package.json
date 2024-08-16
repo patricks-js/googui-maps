@@ -1,6 +1,7 @@
 {
   "name": "@maps/server",
   "description": "A simulator of google maps.",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "./scripts/start-dev.sh",
@@ -15,6 +16,7 @@
     "concurrently": "8.2.2",
     "lefthook": "1.7.11"
   },
+  "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=20"
   }

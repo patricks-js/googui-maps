@@ -1,7 +1,16 @@
 {
   "compilerOptions": {
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "module": "ESNext",
+    "target": "ES2022",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "checkJs": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["dist", "node_modules", "build", ".vscode", "coverage", ".npm"],
+  "typeAcquisition": {
+    "enable": true,
+    "include": ["node"]
+  }
 }
