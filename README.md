@@ -133,14 +133,14 @@ This project is a simple maps application, that gives a simple solution to find 
 
 - POST `/api/maps/:mapId/obstacles`
 - GET `/api/maps/:mapId/obstacles`
-- PUT `/api/obstacles/:obstacleId`
+- PUT `/api/maps/:mapId/obstacles/:obstacleId`
 - DELETE `/api/maps/:mapId/obstacles/:obstacleId`
 
 #### Waypoint
 
 - POST `/api/maps/:mapId/waypoints`
 - GET `/api/maps/:mapId/waypoints`
-- PUT `/api/waypoints/:waypointId`
+- PUT `/api/maps/:mapId/waypoints/:waypointId`
 - DELETE `/api/maps/:mapId/waypoints/:waypointId`
 
 #### Route
