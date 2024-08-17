@@ -3,7 +3,7 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
 import { env } from '../config/env'
 
-const client = postgres(env.DATABASE_URL, { max: 1 })
+const client = postgres(env.POSTGRES_URL, { max: 1 })
 
 try {
   await migrate(drizzle(client), {

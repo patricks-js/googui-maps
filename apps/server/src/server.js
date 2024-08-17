@@ -7,7 +7,7 @@ const port = env.PORT
 const host = '0.0.0.0'
 
 try {
-  await mongoose.connect(env.DATABASE_URL)
+  await mongoose.connect(env.MONGODB_URL)
 
   await app.listen({ port, host })
   app.log.info(`Docs available at http://${host}:${port}/docs`)
