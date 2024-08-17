@@ -90,11 +90,12 @@ This project is a simple maps application, that gives a simple solution to find 
 - [ ] Should be able to create a route and calculate the best path to a map
 - [ ] Should be able to get all routes of a map
 - [ ] Should be able to delete a specific route of a map
-- [ ] Should be able to register a user
-- [ ] Should be able to authenticate a user
-- [ ] Should be able to get user information
-- [ ] Should be able to edit a user
-- [ ] Should be able to delete a specific user
+- [x] Should be able to register a user
+- [x] Should be able to authenticate a user
+- [x] Should be able to get all users if is admin
+- [x] Should be able to get user information
+- [x] Should be able to edit a user
+- [x] Should be able to delete a specific user
 
 ### Business Requirements
 
@@ -106,7 +107,7 @@ This project is a simple maps application, that gives a simple solution to find 
 - [ ] Algorithm should be able to handle multiple obstacles and waypoints
 - [ ] Best path should consider the obstacles and waypoints
 - [ ] Should view the waypoints and obstacles of a map
-- [ ] User should be authenticated
+- [x] User should be authenticated
 - [ ] Map limits should be valid
 - [ ] Start and end point should be different
 - [ ] Start and end point should not be blocked by obstacles
@@ -116,8 +117,8 @@ This project is a simple maps application, that gives a simple solution to find 
 ### Non-functional Requirements
 
 - [ ] System should implement the A* algorithm
-- [ ] Data should be stored in a PostgreSQL/MongoDB database
-- [ ] User must be identified by a JWT token
+- [x] Data should be stored in a PostgreSQL/MongoDB database
+- [x] User must be identified by a JWT token
 - [ ] Handle with memory leaks and infinite loops when calculating the best path
 - [ ] Handle with errors using fastify error handler
 - [x] User id must be a UUID
@@ -153,8 +154,8 @@ This project is a simple maps application, that gives a simple solution to find 
 
 #### User
 
-- POST `/api/users/register`
-- POST `/api/users/authenticate`
+- POST `/api/users/auth/register`
+- POST `/api/users/auth/login`
 - GET `/api/users/:id`
 - PUT `/api/users/:id`
 - DELETE `/api/users/:id` # Also deletes all maps associated
