@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1723868297010,
+      "tag": "0000_productive_silvermane",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723868730674,
+      "tag": "0001_yellow_ravenous",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1723869170798,
+      "tag": "0002_lame_hellfire_club",
+      "breakpoints": true
+    }
+  ]
+}

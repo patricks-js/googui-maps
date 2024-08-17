@@ -22,6 +22,7 @@ app.register(autoload, {
   options: { prefix: '/api' },
   routeParams: true,
   ignorePattern: /^.*(?:test|spec).js$/,
+  ignoreFilter: (file) => file.includes('schema'),
 })
 
-app.setErrorHandler(errorHandler)
+// app.setErrorHandler(errorHandler)
