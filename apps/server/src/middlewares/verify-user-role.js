@@ -9,9 +9,7 @@ export function verifyUserRole(role) {
     const user = request.user
 
     if (user.role !== role) {
-      return reply.forbidden(
-        'You do not have permission to access this resource',
-      )
+      return reply.forbidden('Insufficient permissions')
     }
   }
 }

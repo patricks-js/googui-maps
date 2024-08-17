@@ -12,6 +12,14 @@ import { getAllUsers } from '../../use-cases/get-all-users.js'
 import { getUserById } from '../../use-cases/get-user-by-id.js'
 import { registerUser } from '../../use-cases/register-user.js'
 import { updateUserProfile } from '../../use-cases/update-user-profile.js'
+import {
+  deleteUserSchema,
+  getAllUsersSchema,
+  getUserByIdSchema,
+  loginSchema,
+  registerSchema,
+  updateUserProfileSchema,
+} from './schema.js'
 
 const userParamsSchema = z.object({
   id: z.string().uuid(),
@@ -22,21 +30,25 @@ const userParamsSchema = z.object({
  * @param {import("fastify").FastifyInstance} app
  */
 export default async function (app) {
-  app.post('/auth/register', async (request, reply) => {
-    const registerSchema = z.object({
-      username: z.string(),
-      email: z.string().email(),
-      password: z.string(),
-    })
+  app.post(
+    '/auth/register',
+    { schema: registerSchema },
+    async (request, reply) => {
+      const registerSchema = z.object({
+        username: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+      })
 
-    const data = registerSchema.parse(request.body)
+      const data = registerSchema.parse(request.body)
 
-    const userId = await registerUser(data)
+      const userId = await registerUser(data)
 
-    return reply.status(201).send({ userId })
-  })
+      return reply.status(201).send({ userId })
+    },
+  )
 
-  app.post('/auth/login', async (request, reply) => {
+  app.post('/auth/login', { schema: loginSchema }, async (request, reply) => {
     const authSchema = z.object({
       email: z.string().email(),
       password: z.string(),
@@ -62,7 +74,10 @@ export default async function (app) {
 
   app.get(
     '/',
-    { onRequest: [app.authenticate, verifyUserRole('admin')] },
+    {
+      onRequest: [app.authenticate, verifyUserRole('admin')],
+      schema: getAllUsersSchema,
+    },
     async (request, reply) => {
       const { users } = await getAllUsers()
 
@@ -70,33 +85,41 @@ export default async function (app) {
     },
   )
 
-  app.get('/:id', { onRequest: [app.authenticate] }, async (request, reply) => {
-    const { id } = userParamsSchema.parse(request.params)
+  app.get(
+    '/:id',
+    { onRequest: [app.authenticate], schema: getUserByIdSchema },
+    async (request, reply) => {
+      const { id } = userParamsSchema.parse(request.params)
 
-    const user = await getUserById(id)
+      const user = await getUserById(id)
 
-    return { user }
-  })
+      return { user }
+    },
+  )
 
-  app.put('/:id', { onRequest: [app.authenticate] }, async (request, reply) => {
-    const { id } = userParamsSchema.parse(request.params)
+  app.put(
+    '/:id',
+    { onRequest: [app.authenticate], schema: updateUserProfileSchema },
+    async (request, reply) => {
+      const { id } = userParamsSchema.parse(request.params)
 
-    const userChangesSchema = z.object({
-      username: z.string().optional(),
-      email: z.string().email().optional(),
-      password: z.string().optional(),
-    })
+      const userChangesSchema = z.object({
+        username: z.string().optional(),
+        email: z.string().email().optional(),
+        password: z.string().optional(),
+      })
 
-    const changes = userChangesSchema.parse(request.body)
+      const changes = userChangesSchema.parse(request.body)
 
-    const { user } = await updateUserProfile(id, changes)
+      const { user } = await updateUserProfile(id, changes)
 
-    return reply.send({ user })
-  })
+      return reply.send({ user })
+    },
+  )
 
   app.delete(
     '/:id',
-    { onRequest: [app.authenticate] },
+    { onRequest: [app.authenticate], schema: deleteUserSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
 

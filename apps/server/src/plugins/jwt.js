@@ -14,7 +14,7 @@ export default fp(
       try {
         await request.jwtVerify()
       } catch (err) {
-        reply.unauthorized()
+        reply.unauthorized('Authentication failed')
       }
     })
   },
