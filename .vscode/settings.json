@@ -1,14 +1,27 @@
 {
-  "[javascript]": {
+  "editor.formatOnSave": false,
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "biomejs.biome",
     "editor.codeActionsOnSave": {
       "quickfix.biome": "explicit",
       "source.organizeImports.biome": "explicit"
     }
   },
+  "[json][jsonc]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[mdx][markdown]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  },
   "cSpell.words": [
-    "openapi",
+    "autoload",
+    "Autoload",
+    "biomejs",
+    "fastify",
     "googui",
-    "fastify"
+    "openapi"
   ]
 }

@@ -1,13 +1,10 @@
 services:
-  mongodb:
+  maps-mongodb:
     image: bitnami/mongodb:latest
-    container_name: googui-map-users-db
+    container_name: maps-mongodb
     restart: always
-    environment:
-      MONGODB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
-      MONGODB_USERNAME: ${MONGODB_USERNAME}
-      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
-      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    env_file:
+      - .env.docker
     ports:
       - 27017:27017
     volumes:
