@@ -1,6 +1,7 @@
 import { ZodError } from 'zod'
-import { BadRequestError, NotFoundError, ServerError } from '../http/errors.js'
-import { badRequest, notFound, serverError } from '../http/http-helpers.js'
+import { InvalidCredentialsError } from '../use-cases/_errors/invalid-credentials.js'
+import { NotFoundError } from '../use-cases/_errors/not-found.js'
+import { UserAlreadyExistsError } from '../use-cases/_errors/user-already-exists.js'
 
 /**
  *
@@ -11,42 +12,30 @@ import { badRequest, notFound, serverError } from '../http/http-helpers.js'
  */
 export async function errorHandler(error, request, reply) {
   if (error instanceof ZodError) {
-    return reply.status(400).send(
-      badRequest({
-        message: 'Validation Error',
-        errors: error.flatten().fieldErrors,
-      }),
+    return reply.badRequest(
+      `Validation Error: ${JSON.stringify(error.flatten().fieldErrors)}`,
     )
   }
 
-  if (error instanceof BadRequestError) {
-    return reply.status(400).send(
-      badRequest({
-        message: error.message,
-        errors: error.stack || [],
-      }),
-    )
+  if (
+    error instanceof InvalidCredentialsError ||
+    error instanceof UserAlreadyExistsError
+  ) {
+    return reply.badRequest(error.message)
   }
 
   if (error instanceof NotFoundError) {
-    return reply.status(404).send(
-      notFound({
-        message: error.message,
-      }),
-    )
+    return reply.notFound(error.message)
   }
 
-  if (error instanceof ServerError) {
-    return reply.status(500).send(
-      serverError({
-        message: error.message,
-      }),
-    )
+  if (error.statusCode === 401) {
+    return error
   }
 
-  return reply.status(500).send(
-    serverError({
-      message: 'Internal Server Error',
-    }),
-  )
+  if (error.statusCode === 403) {
+    return error
+  }
+
+  if (error)
+    return reply.internalServerError(`Internal Server Error: ${error.message}`)
 }
