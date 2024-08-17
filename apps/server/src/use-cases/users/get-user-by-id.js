@@ -1,6 +1,5 @@
-import { db } from '../db/connection.js'
-import { users } from '../db/schema/user.js'
-import { NotFoundError } from './_errors/not-found.js'
+import { db } from '../../db/connection.js'
+import { NotFoundError } from '../_errors/not-found.js'
 
 export async function getUserById(id) {
   const user = await db.query.users.findFirst({

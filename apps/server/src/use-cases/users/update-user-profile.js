@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
-import { db } from '../db/connection.js'
-import { users } from '../db/schema/user.js'
+import { db } from '../../db/connection.js'
+import { users } from '../../db/schema/user.js'
 import { getUserById } from './get-user-by-id.js'
 
 export async function updateUserProfile(id, changes) {
