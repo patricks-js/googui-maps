@@ -4,7 +4,7 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
-  DATABASE_URL: z.string().url().startsWith('mongodb://'),
+  DATABASE_URL: z.string().url().startsWith('postgres://'),
   PORT: z.coerce.number().default(3333),
 })
 
