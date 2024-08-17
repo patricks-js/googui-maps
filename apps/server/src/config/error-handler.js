@@ -17,11 +17,12 @@ export async function errorHandler(error, request, reply) {
     )
   }
 
-  if (
-    error instanceof InvalidCredentialsError ||
-    error instanceof UserAlreadyExistsError
-  ) {
+  if (error instanceof InvalidCredentialsError) {
     return reply.badRequest(error.message)
+  }
+
+  if (error instanceof UserAlreadyExistsError) {
+    return reply.conflict(error.message)
   }
 
   if (error instanceof NotFoundError) {
