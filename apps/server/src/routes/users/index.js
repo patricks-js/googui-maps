@@ -6,12 +6,12 @@ import { db } from '../../db/connection.js'
 import { users } from '../../db/schema/user.js'
 import { validators } from '../../http/validators.js'
 import { verifyUserRole } from '../../middlewares/verify-user-role.js'
-import { authenticateUser } from '../../use-cases/authenticate.js'
-import { deleteUserById } from '../../use-cases/delete-user-by-id.js'
-import { getAllUsers } from '../../use-cases/get-all-users.js'
-import { getUserById } from '../../use-cases/get-user-by-id.js'
-import { registerUser } from '../../use-cases/register-user.js'
-import { updateUserProfile } from '../../use-cases/update-user-profile.js'
+import { authenticateUser } from '../../use-cases/users/authenticate.js'
+import { deleteUserById } from '../../use-cases/users/delete-user-by-id.js'
+import { getAllUsers } from '../../use-cases/users/get-all-users.js'
+import { getUserById } from '../../use-cases/users/get-user-by-id.js'
+import { registerUser } from '../../use-cases/users/register-user.js'
+import { updateUserProfile } from '../../use-cases/users/update-user-profile.js'
 import {
   deleteUserSchema,
   getAllUsersSchema,
@@ -86,7 +86,7 @@ export default async function (app) {
   )
 
   app.get(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: getUserByIdSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
@@ -98,7 +98,7 @@ export default async function (app) {
   )
 
   app.put(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: updateUserProfileSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
@@ -118,7 +118,7 @@ export default async function (app) {
   )
 
   app.delete(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: deleteUserSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)

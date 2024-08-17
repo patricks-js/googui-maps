@@ -25,4 +25,4 @@ app.register(autoload, {
   ignoreFilter: (file) => file.includes('schema'),
 })
 
-// app.setErrorHandler(errorHandler)
+app.setErrorHandler(errorHandler)

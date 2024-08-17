@@ -1,10 +1,10 @@
 import { eq } from 'drizzle-orm'
-import { db } from '../db/connection.js'
-import { users } from '../db/schema/user.js'
+import { db } from '../../db/connection.js'
+import { users } from '../../db/schema/user.js'
 import { getUserById } from './get-user-by-id.js'
 
-export async function updateUserProfile(id, changes) {
-  const userExists = await getUserById(id)
+export async function updateUserProfile(userId, changes) {
+  const userExists = await getUserById(userId)
 
   if (changes.username) {
     userExists.username = changes.username
@@ -21,7 +21,7 @@ export async function updateUserProfile(id, changes) {
   const [user] = await db
     .update(users)
     .set(userExists)
-    .where(eq(users.id, userExists.id))
+    .where(eq(users.id, userId))
     .returning()
 
   return { user }

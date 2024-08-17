@@ -1,3 +1,23 @@
+const invalidCredentialsResponse = {
+  description: 'Invalid credentials',
+  type: 'object',
+  properties: {
+    statusCode: { type: 'number', example: 400 },
+    error: { type: 'string', example: 'Bad Request' },
+    message: { type: 'string', example: 'Invalid credentials' },
+  },
+}
+
+const userAlreadyExistsResponse = {
+  description: 'User already exists',
+  type: 'object',
+  properties: {
+    statusCode: { type: 'number', example: 409 },
+    error: { type: 'string', example: 'Conflict' },
+    message: { type: 'string', example: 'User already exists' },
+  },
+}
+
 const unauthorizedResponse = {
   description: 'Unauthorized',
   type: 'object',
@@ -46,6 +66,7 @@ export const registerSchema = {
         userId: { type: 'string' },
       },
     },
+    409: userAlreadyExistsResponse,
   },
 }
 
@@ -68,6 +89,7 @@ export const loginSchema = {
       },
     },
     401: unauthorizedResponse,
+    400: invalidCredentialsResponse,
   },
 }
 
