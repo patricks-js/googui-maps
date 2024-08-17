@@ -3,9 +3,9 @@ import { db } from '../../db/connection.js'
 import { users } from '../../db/schema/user.js'
 import { NotFoundError } from '../_errors/not-found.js'
 
-export async function deleteUserById(id) {
+export async function deleteUserById(userId) {
   const user = await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.id, id),
+    where: (users, { eq }) => eq(users.id, userId),
     columns: { id: true },
   })
 
@@ -13,5 +13,5 @@ export async function deleteUserById(id) {
     throw new NotFoundError('User not found.')
   }
 
-  await db.delete(users).where(eq(users.id, user.id))
+  await db.delete(users).where(eq(users.id, userId))
 }

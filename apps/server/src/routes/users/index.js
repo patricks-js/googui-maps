@@ -86,7 +86,7 @@ export default async function (app) {
   )
 
   app.get(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: getUserByIdSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
@@ -98,7 +98,7 @@ export default async function (app) {
   )
 
   app.put(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: updateUserProfileSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
@@ -118,7 +118,7 @@ export default async function (app) {
   )
 
   app.delete(
-    '/:id',
+    '/:userId',
     { onRequest: [app.authenticate], schema: deleteUserSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
