@@ -75,9 +75,9 @@ This project is a simple maps application, that gives a simple solution to find 
 
 ### Functional Requirements
 
-- [ ] Should be able to create a map
-- [ ] Should be able to get a specific map
-- [ ] Should be able to edit a map
+- [x] Should be able to create a map
+- [x] Should be able to get a specific map
+- [x] Should be able to edit a map
 - [ ] Should be able to delete a map with all its associated data
 - [ ] Should be able to create an obstacle to a map
 - [ ] Should be able to get all obstacles of a map
@@ -99,7 +99,7 @@ This project is a simple maps application, that gives a simple solution to find 
 
 ### Business Requirements
 
-- [ ] Map should have a valid id, start point and end point
+- [ ] Map should have a valid id and limits
 - [ ] Map should have at least one obstacle and one waypoint
 - [ ] Map should calculate the best path between start and end point
 - [ ] Waypoints should be within the map limits
@@ -120,7 +120,7 @@ This project is a simple maps application, that gives a simple solution to find 
 - [x] Data should be stored in a PostgreSQL/MongoDB database
 - [x] User must be identified by a JWT token
 - [ ] Handle with memory leaks and infinite loops when calculating the best path
-- [ ] Handle with errors using fastify error handler
+- [x] Handle with errors using fastify error handler
 - [x] User id must be a UUID
 
 ### Endpoints
@@ -156,6 +156,7 @@ This project is a simple maps application, that gives a simple solution to find 
 
 - POST `/api/users/auth/register`
 - POST `/api/users/auth/login`
-- GET `/api/users/:id`
-- PUT `/api/users/:id`
-- DELETE `/api/users/:id` # Also deletes all maps associated
+- GET `/api/users` # Only admin
+- GET `/api/users/profile`
+- PUT `/api/users`
+- DELETE `/api/users` # Also deletes all maps associated
