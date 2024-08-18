@@ -10,7 +10,7 @@ export const maps = pgTable('tb_maps', {
   width: integer('width').notNull(),
   height: integer('height').notNull(),
   userId: uuid('user_id')
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   bestPathId: integer('best_path_id').references(() => routes.id, {
     onDelete: 'cascade',
