@@ -2,6 +2,11 @@ import { z } from 'zod'
 import { createBestRoute } from '../../../../use-cases/routes/create-best-route.js'
 import { deleteRoute } from '../../../../use-cases/routes/delete-route.js'
 import { getBestRouteById } from '../../../../use-cases/routes/get-best-route-by-id.js'
+import {
+  createRouteSchema,
+  deleteRouteSchema,
+  getRouteByIdSchema,
+} from './schema.js'
 
 const mapIdParamSchema = z.object({
   mapId: z.coerce.number(),
@@ -19,7 +24,7 @@ const mapRouteIdParamSchema = z.object({
 export default async function (app) {
   app.addHook('onRequest', app.authenticate)
 
-  app.post('/', async (request, reply) => {
+  app.post('/', { schema: createRouteSchema }, async (request, reply) => {
     const { mapId } = mapIdParamSchema.parse(request.params)
 
     const createSchema = z.object({
@@ -41,19 +46,27 @@ export default async function (app) {
     return { newRoute }
   })
 
-  app.get('/:routeId', async (request, reply) => {
-    const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
+  app.get(
+    '/:routeId',
+    { schema: getRouteByIdSchema },
+    async (request, reply) => {
+      const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
 
-    const { route } = await getBestRouteById(routeId, mapId)
+      const { route } = await getBestRouteById(routeId, mapId)
 
-    return { route }
-  })
+      return { route }
+    },
+  )
 
-  app.delete('/:routeId', async (request, reply) => {
-    const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
+  app.delete(
+    '/:routeId',
+    { schema: deleteRouteSchema },
+    async (request, reply) => {
+      const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
 
-    await deleteRoute(routeId, mapId)
+      await deleteRoute(routeId, mapId)
 
-    return reply.status(204).send()
-  })
+      return reply.status(204).send()
+    },
+  )
 }
