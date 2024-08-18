@@ -1,4 +1,4 @@
-const userNotFoundResponse = {
+const notFoundResponse = {
   description: 'User not found',
   type: 'object',
   properties: {
@@ -139,7 +139,7 @@ export const getUserByIdSchema = {
       },
     },
     401: unauthorizedResponse,
-    404: userNotFoundResponse,
+    404: notFoundResponse,
   },
 }
 
@@ -162,7 +162,7 @@ export const updateUserProfileSchema = {
       },
     },
     401: unauthorizedResponse,
-    404: userNotFoundResponse,
+    404: notFoundResponse,
   },
 }
 
@@ -171,6 +171,6 @@ export const deleteUserSchema = {
   response: {
     204: {},
     401: unauthorizedResponse,
-    404: userNotFoundResponse,
+    404: notFoundResponse,
   },
 }
