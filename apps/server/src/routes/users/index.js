@@ -21,10 +21,6 @@ import {
   updateUserProfileSchema,
 } from './schema.js'
 
-const userParamsSchema = z.object({
-  id: z.string().uuid(),
-})
-
 /**
  *
  * @param {import("fastify").FastifyInstance} app
@@ -42,7 +38,7 @@ export default async function (app) {
 
       const data = registerSchema.parse(request.body)
 
-      const userId = await registerUser(data)
+      const { userId } = await registerUser(data)
 
       return reply.status(201).send({ userId })
     },
@@ -86,23 +82,15 @@ export default async function (app) {
   )
 
   app.get(
-    '/:userId',
+    '/profile',
     { onRequest: [app.authenticate], schema: getUserByIdSchema },
-    async (request, reply) => {
-      const { id } = userParamsSchema.parse(request.params)
-
-      const user = await getUserById(id)
-
-      return { user }
-    },
+    async (request, reply) => getUserById(request.user.sub),
   )
 
   app.put(
-    '/:userId',
+    '/',
     { onRequest: [app.authenticate], schema: updateUserProfileSchema },
     async (request, reply) => {
-      const { id } = userParamsSchema.parse(request.params)
-
       const userChangesSchema = z.object({
         username: z.string().optional(),
         email: z.string().email().optional(),
@@ -111,19 +99,19 @@ export default async function (app) {
 
       const changes = userChangesSchema.parse(request.body)
 
-      const { user } = await updateUserProfile(id, changes)
+      const { user } = await updateUserProfile(request.user.sub, changes)
 
       return reply.send({ user })
     },
   )
 
   app.delete(
-    '/:userId',
+    '/',
     { onRequest: [app.authenticate], schema: deleteUserSchema },
     async (request, reply) => {
       const { id } = userParamsSchema.parse(request.params)
 
-      await deleteUserById(id)
+      await deleteUserById(request.user.sub)
 
       return reply.status(204).send()
     },

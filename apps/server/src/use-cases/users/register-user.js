@@ -20,7 +20,7 @@ export async function registerUser(user) {
     password: hashedPassword,
   })
 
-  return id
+  return { userId: id }
 }
 
 async function userAlreadyExists(user) {

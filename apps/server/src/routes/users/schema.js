@@ -1,3 +1,13 @@
+const notFoundResponse = {
+  description: 'User not found',
+  type: 'object',
+  properties: {
+    statusCode: { type: 'number', example: 404 },
+    error: { type: 'string', example: 'Not Found' },
+    message: { type: 'string', example: 'User not found' },
+  },
+}
+
 const invalidCredentialsResponse = {
   description: 'Invalid credentials',
   type: 'object',
@@ -113,13 +123,6 @@ export const getAllUsersSchema = {
 
 export const getUserByIdSchema = {
   tags: ['user'],
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string' },
-    },
-    required: ['id'],
-  },
   response: {
     200: {
       description: 'User details',
@@ -129,27 +132,12 @@ export const getUserByIdSchema = {
       },
     },
     401: unauthorizedResponse,
-    404: {
-      description: 'User not found',
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 404 },
-        error: { type: 'string', example: 'Not Found' },
-        message: { type: 'string', example: 'User not found' },
-      },
-    },
+    404: notFoundResponse,
   },
 }
 
 export const updateUserProfileSchema = {
   tags: ['user'],
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string' },
-    },
-    required: ['id'],
-  },
   body: {
     type: 'object',
     properties: {
@@ -167,38 +155,15 @@ export const updateUserProfileSchema = {
       },
     },
     401: unauthorizedResponse,
-    404: {
-      description: 'User not found',
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 404 },
-        error: { type: 'string', example: 'Not Found' },
-        message: { type: 'string', example: 'User not found' },
-      },
-    },
+    404: notFoundResponse,
   },
 }
 
 export const deleteUserSchema = {
   tags: ['user'],
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string' },
-    },
-    required: ['id'],
-  },
   response: {
     204: {},
     401: unauthorizedResponse,
-    404: {
-      description: 'User not found',
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 404 },
-        error: { type: 'string', example: 'Not Found' },
-        message: { type: 'string', example: 'User not found' },
-      },
-    },
+    404: notFoundResponse,
   },
 }

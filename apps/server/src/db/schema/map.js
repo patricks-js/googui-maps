@@ -12,7 +12,9 @@ export const maps = pgTable('tb_maps', {
   userId: uuid('user_id')
     .references(() => users.id)
     .notNull(),
-  bestPathId: integer('best_path_id').references(() => routes.id),
+  bestPathId: integer('best_path_id').references(() => routes.id, {
+    onDelete: 'cascade',
+  }),
 })
 
 export const mapsRelations = relations(maps, ({ many, one }) => ({
