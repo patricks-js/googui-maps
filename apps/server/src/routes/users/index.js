@@ -38,7 +38,7 @@ export default async function (app) {
 
       const data = registerSchema.parse(request.body)
 
-      const userId = await registerUser(data)
+      const { userId } = await registerUser(data)
 
       return reply.status(201).send({ userId })
     },
@@ -84,11 +84,7 @@ export default async function (app) {
   app.get(
     '/profile',
     { onRequest: [app.authenticate], schema: getUserByIdSchema },
-    async (request, reply) => {
-      const user = await getUserById(request.user.sub)
-
-      return { user }
-    },
+    async (request, reply) => getUserById(request.user.sub),
   )
 
   app.put(

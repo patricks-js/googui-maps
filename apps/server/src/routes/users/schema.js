@@ -123,13 +123,6 @@ export const getAllUsersSchema = {
 
 export const getUserByIdSchema = {
   tags: ['user'],
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string' },
-    },
-    required: ['id'],
-  },
   response: {
     200: {
       description: 'User details',

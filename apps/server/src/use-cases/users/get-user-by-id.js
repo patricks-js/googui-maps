@@ -16,5 +16,5 @@ export async function getUserById(userId) {
     throw new NotFoundError('User not found.')
   }
 
-  return user
+  return { user }
 }
