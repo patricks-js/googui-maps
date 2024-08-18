@@ -21,7 +21,7 @@ const notFoundResponse = {
 const mapSchema = {
   type: 'object',
   properties: {
-    mapId: { type: 'string' },
+    mapId: { type: 'number' },
     width: { type: 'number' },
     height: { type: 'number' },
   },
@@ -32,7 +32,7 @@ export const getMapByIdSchema = {
   params: {
     type: 'object',
     properties: {
-      mapId: { type: 'string' },
+      mapId: { type: 'number' },
     },
     required: ['mapId'],
   },
@@ -64,7 +64,7 @@ export const createMapSchema = {
       description: 'Map created successfully',
       type: 'object',
       properties: {
-        mapId: { type: 'string' },
+        mapId: { type: 'number' },
       },
     },
     401: unauthorizedResponse,
@@ -76,7 +76,7 @@ export const updateMapSchema = {
   params: {
     type: 'object',
     properties: {
-      mapId: { type: 'string' },
+      mapId: { type: 'number' },
     },
     required: ['mapId'],
   },
@@ -105,7 +105,7 @@ export const deleteMapSchema = {
   params: {
     type: 'object',
     properties: {
-      mapId: { type: 'string' },
+      mapId: { type: 'number' },
     },
     required: ['mapId'],
   },

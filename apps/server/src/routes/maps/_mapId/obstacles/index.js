@@ -1,6 +1,23 @@
 import { z } from 'zod'
 import { createObstacle } from '../../../../use-cases/obstacles/create-obstacle.js'
+import { deleteObstacle } from '../../../../use-cases/obstacles/delete-obstacle.js'
 import { getAllObstacles } from '../../../../use-cases/obstacles/get-all-obstacles.js'
+import { updateObstacle } from '../../../../use-cases/obstacles/update-obstacle.js'
+import {
+  createObstacleSchema,
+  deleteObstacleSchema,
+  getAllObstaclesSchema,
+  updateObstacleSchema,
+} from './schema.js'
+
+const mapParamSchema = z.object({
+  mapId: z.coerce.number(),
+})
+
+const mapObstacleParamSchema = z.object({
+  obstacleId: z.coerce.number(),
+  mapId: z.coerce.number(),
+})
 
 /**
  *
@@ -9,12 +26,14 @@ import { getAllObstacles } from '../../../../use-cases/obstacles/get-all-obstacl
 export default async function (app) {
   app.addHook('onRequest', app.authenticate)
 
-  app.post('/', async (request, reply) => {
-    const paramsSchema = z.object({
-      mapId: z.coerce.number(),
-    })
+  app.get('/', { schema: getAllObstaclesSchema }, async (request, reply) => {
+    const { mapId } = mapParamSchema.parse(request.params)
 
-    const { mapId } = paramsSchema.parse(request.params)
+    return getAllObstacles(mapId)
+  })
+
+  app.post('/', { schema: createObstacleSchema }, async (request, reply) => {
+    const { mapId } = mapParamSchema.parse(request.params)
 
     const createSchema = z.object({
       position: z.object({
@@ -29,28 +48,42 @@ export default async function (app) {
     return createObstacle({ mapId, ...data })
   })
 
-  app.get('/', async (request, reply) => {
-    const paramsSchema = z.object({
-      mapId: z.coerce.number(),
-    })
+  app.put(
+    '/:obstacleId',
+    { schema: updateObstacleSchema },
+    async (request, reply) => {
+      const { obstacleId, mapId } = mapObstacleParamSchema.parse(request.params)
 
-    const { mapId } = paramsSchema.parse(request.params)
+      const obstacleChangesSchema = z.object({
+        position: z
+          .object({
+            x: z.number().optional(),
+            y: z.number().optional(),
+          })
+          .optional(),
+        size: z.number().optional(),
+      })
 
-    return getAllObstacles(mapId)
-  })
+      const changes = obstacleChangesSchema.parse(request.body)
 
-  app.get('/:obstacleId', async (request, reply) => {
-    const paramsSchema = z.object({
-      obstacleId: z.coerce.number(),
-      mapId: z.coerce.number(),
-    })
+      const { updatedObstacle } = await updateObstacle(obstacleId, {
+        ...changes,
+        mapId,
+      })
 
-    const { obstacleId, mapId } = paramsSchema.parse(request.params)
+      return { updatedObstacle }
+    },
+  )
 
-    // return getObstacleById(obstacleId, mapId)
-  })
+  app.delete(
+    '/:obstacleId',
+    { schema: deleteObstacleSchema },
+    async (request, reply) => {
+      const { obstacleId, mapId } = mapObstacleParamSchema.parse(request.params)
 
-  app.delete('/:obstacleId', async (request, reply) => {
-    return { message: 'Obstacle deleted' }
-  })
+      await deleteObstacle(obstacleId, mapId)
+
+      return reply.status(204).send()
+    },
+  )
 }
