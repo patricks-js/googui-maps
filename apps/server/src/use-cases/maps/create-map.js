@@ -5,13 +5,13 @@ import { getUserById } from '../users/get-user-by-id.js'
 export async function createMap(map) {
   const user = await getUserById(map.userId)
 
-  const [mapId] = await db
+  const [{ mapId }] = await db
     .insert(maps)
     .values({
       ...map,
-      userId: user.id,
+      userId: map.userId,
     })
     .returning({ mapId: maps.id })
 
-  return mapId
+  return { mapId }
 }
