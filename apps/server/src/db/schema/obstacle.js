@@ -7,7 +7,7 @@ export const obstacles = pgTable('tb_obstacles', {
   position: point('position', { mode: 'xy' }).notNull(),
   size: integer('size').notNull(),
   mapId: integer('map_id')
-    .references(() => maps.id)
+    .references(() => maps.id, { onDelete: 'cascade' })
     .notNull(),
 })
 

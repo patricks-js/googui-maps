@@ -7,7 +7,7 @@ export const waypoints = pgTable('tb_waypoints', {
   name: varchar('name').notNull(),
   position: point('position', { mode: 'xy' }).notNull(),
   mapId: integer('map_id')
-    .references(() => maps.id)
+    .references(() => maps.id, { onDelete: 'cascade' })
     .notNull(),
 })
 

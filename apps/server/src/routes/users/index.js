@@ -109,8 +109,6 @@ export default async function (app) {
     '/',
     { onRequest: [app.authenticate], schema: deleteUserSchema },
     async (request, reply) => {
-      const { id } = userParamsSchema.parse(request.params)
-
       await deleteUserById(request.user.sub)
 
       return reply.status(204).send()

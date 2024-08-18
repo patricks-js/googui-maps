@@ -6,7 +6,7 @@ export const routes = pgTable('tb_routes', {
   start: point('start', { mode: 'xy' }).notNull(),
   end: point('end', { mode: 'xy' }).notNull(),
   distance: integer('distance').notNull(),
-  mapId: integer('map_id')
+  mapId: integer('map_id', { onDelete: 'cascade' })
     .references(() => maps.id)
     .notNull(),
 })
