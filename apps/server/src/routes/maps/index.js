@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import { createMap } from '../../use-cases/maps/create-map.js'
+import { deleteMap } from '../../use-cases/maps/delete-map.js'
 import { getMapById } from '../../use-cases/maps/get-map-by-id.js'
+import { updateMap } from '../../use-cases/maps/update-map.js'
+
+const mapIdParamSchema = z.object({
+  mapId: z.coerce.number(),
+})
 
 /**
  *
@@ -10,11 +16,7 @@ export default async function (app) {
   app.addHook('onRequest', app.authenticate)
 
   app.get('/:mapId', async (request, reply) => {
-    const paramsSchema = z.object({
-      mapId: z.coerce.number(),
-    })
-
-    const { mapId } = paramsSchema.parse(request.params)
+    const { mapId } = mapIdParamSchema.parse(request.params)
 
     return getMapById(mapId)
   })
@@ -34,10 +36,25 @@ export default async function (app) {
   })
 
   app.put('/:mapId', async (request, reply) => {
-    return reply.status(204).send()
+    const { mapId } = mapIdParamSchema.parse(request.params)
+
+    const mapChangesSchema = z.object({
+      width: z.number().positive().optional(),
+      height: z.number().positive().optional(),
+    })
+
+    const changes = mapChangesSchema.parse(request.body)
+
+    const { updatedMap } = await updateMap(mapId, changes)
+
+    return { updatedMap }
   })
 
   app.delete('/:mapId', async (request, reply) => {
+    const { mapId } = mapIdParamSchema.parse(request.params)
+
+    await deleteMap(mapId)
+
     return reply.status(204).send()
   })
 }
