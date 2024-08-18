@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { createWaypoint } from '../../../../use-cases/waypoints/create-waypoint.js'
+import { deleteWaypoint } from '../../../../use-cases/waypoints/delete-waypoint.js'
 import { getAllWaypoints } from '../../../../use-cases/waypoints/get-all-waypoint.js'
+import { updateWaypoint } from '../../../../use-cases/waypoints/update-waypoint.js'
 
 const mapParamSchema = z.object({
   mapId: z.coerce.number(),
@@ -47,12 +49,31 @@ export default async function (app) {
   app.put('/:waypointId', async (request, reply) => {
     const { waypointId, mapId } = mapWaypointParamSchema.parse(request.params)
 
-    const { waypoint } = await getWaypointById(waypointId, mapId)
+    const waypointChangesSchema = z.object({
+      position: z
+        .object({
+          x: z.number().optional(),
+          y: z.number().optional(),
+        })
+        .optional(),
+      name: z.string().optional(),
+    })
 
-    return { waypoint }
+    const changes = waypointChangesSchema.parse(request.body)
+
+    const { updatedWaypoint } = await updateWaypoint(waypointId, {
+      ...changes,
+      mapId,
+    })
+
+    return { updatedWaypoint }
   })
 
   app.delete('/:waypointId', async (request, reply) => {
-    return { message: 'Obstacle deleted' }
+    const { waypointId, mapId } = mapWaypointParamSchema.parse(request.params)
+
+    await deleteWaypoint(waypointId, mapId)
+
+    return reply.status(204).send()
   })
 }

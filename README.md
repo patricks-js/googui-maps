@@ -79,14 +79,14 @@ This project is a simple maps application, that gives a simple solution to find 
 - [x] Should be able to get a specific map
 - [x] Should be able to edit a map
 - [ ] Should be able to delete a map with all its associated data
-- [ ] Should be able to create an obstacle to a map
-- [ ] Should be able to get all obstacles of a map
-- [ ] Should be able to edit an obstacle of a map
-- [ ] Should be able to delete a specific obstacle of a map
-- [ ] Should be able to create a waypoint to a map
-- [ ] Should be able to get all waypoints of a map
-- [ ] Should be able to edit a waypoint of a map
-- [ ] Should be able to delete a specific waypoint of a map
+- [x] Should be able to create an obstacle to a map
+- [x] Should be able to get all obstacles of a map
+- [x] Should be able to edit an obstacle of a map
+- [x] Should be able to delete a specific obstacle of a map
+- [x] Should be able to create a waypoint to a map
+- [x] Should be able to get all waypoints of a map
+- [x] Should be able to edit a waypoint of a map
+- [x] Should be able to delete a specific waypoint of a map
 - [ ] Should be able to create a route and calculate the best path to a map
 - [ ] Should be able to get all routes of a map
 - [ ] Should be able to delete a specific route of a map

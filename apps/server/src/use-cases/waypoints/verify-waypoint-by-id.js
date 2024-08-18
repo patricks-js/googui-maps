@@ -7,7 +7,7 @@ export async function verifyWaypointById(waypointId, mapId) {
 
   const waypoint = await db.query.waypoints.findFirst({
     where: (waypoints, { eq, and }) =>
-      and(eq(waypoints.id, waypointId), eq(waypoint.mapId, mapId)),
+      and(eq(waypoints.id, waypointId), eq(waypoints.mapId, mapId)),
   })
 
   if (!waypoint) {
