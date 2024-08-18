@@ -1,0 +1,59 @@
+import { z } from 'zod'
+import { createBestRoute } from '../../../../use-cases/routes/create-best-route.js'
+import { deleteRoute } from '../../../../use-cases/routes/delete-route.js'
+import { getBestRouteById } from '../../../../use-cases/routes/get-best-route-by-id.js'
+
+const mapIdParamSchema = z.object({
+  mapId: z.coerce.number(),
+})
+
+const mapRouteIdParamSchema = z.object({
+  routeId: z.coerce.number(),
+  mapId: z.coerce.number(),
+})
+
+/**
+ *
+ * @param {import("fastify").FastifyInstance} app
+ */
+export default async function (app) {
+  app.addHook('onRequest', app.authenticate)
+
+  app.post('/', async (request, reply) => {
+    const { mapId } = mapIdParamSchema.parse(request.params)
+
+    const createSchema = z.object({
+      start: z.object({
+        x: z.number(),
+        y: z.number(),
+      }),
+      end: z.object({
+        x: z.number(),
+        y: z.number(),
+      }),
+      distance: z.number(),
+    })
+
+    const data = createSchema.parse(request.body)
+
+    const { newRoute } = await createBestRoute({ ...data, mapId })
+
+    return { newRoute }
+  })
+
+  app.get('/:routeId', async (request, reply) => {
+    const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
+
+    const { route } = await getBestRouteById(routeId, mapId)
+
+    return { route }
+  })
+
+  app.delete('/:routeId', async (request, reply) => {
+    const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
+
+    await deleteRoute(routeId, mapId)
+
+    return reply.status(204).send()
+  })
+}
