@@ -14,6 +14,7 @@ export default defineConfig({
         '**/main/**',
         '**/middlewares/**',
         '**/plugins/**',
+        '**/_errors/**',
       ],
     },
   },

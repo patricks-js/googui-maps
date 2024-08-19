@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '../../db/connection.js'
-import { UserAlreadyExistsError } from '../_errors/user-already-exists.js'
-import { getAllUsers } from './get-all-users.js'
 import { registerUser } from './register-user.js'
 
 vi.mock('crypto', () => ({

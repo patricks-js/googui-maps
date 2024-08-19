@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs'
 import { db } from '../../db/connection.js'
-import { users } from '../../db/schema/user.js'
 import { InvalidCredentialsError } from '../_errors/invalid-credentials.js'
 
 export async function authenticateUser(credentials) {

@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
-import { eq } from 'drizzle-orm'
 import { db } from '../../db/connection.js'
 import { users } from '../../db/schema/user.js'
 import { UserAlreadyExistsError } from '../_errors/user-already-exists.js'

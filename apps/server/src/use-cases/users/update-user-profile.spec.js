@@ -1,6 +1,4 @@
-import bcrypt from 'bcryptjs'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { db } from '../../db/connection.js'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getUserById } from './get-user-by-id.js'
 import { updateUserProfile } from './update-user-profile.js'
 
