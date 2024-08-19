@@ -43,7 +43,7 @@ describe('Register user use case', () => {
       id: '1',
     })
 
-    expect(mockInsert).toHaveBeenCalledTimes(0)
+    expect(mockInsert).not.toHaveBeenCalled()
     await expect(registerUser(newUser)).rejects.toThrowError(
       'User already exists.',
     )
