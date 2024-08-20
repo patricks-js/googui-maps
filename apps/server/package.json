@@ -18,6 +18,7 @@
     "test:coverage": "pnpm env:load vitest run --coverage",
     "test:ui": "pnpm env:load vitest --ui",
     "services:up": "pnpm run docker:compose up -d",
+    "services:start": "pnpm run docker:compose start",
     "services:stop": "pnpm run docker:compose stop",
     "services:down": "pnpm run docker:compose down",
     "docker:compose": "docker-compose -f ../../docker-compose.yaml",

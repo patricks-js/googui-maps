@@ -6,12 +6,10 @@ import { verifyObstacleById } from './verify-obstacle-by-id.js'
 export async function updateObstacle(obstacleId, changes) {
   const { obstacle } = await verifyObstacleById(obstacleId, changes.mapId)
 
-  if (changes.position) {
-    obstacle.position = changes.position
-  }
-
-  if (changes.size) {
-    obstacle.size = changes.size
+  for (const key in changes) {
+    if (changes[key]) {
+      obstacle[key] = changes[key]
+    }
   }
 
   const [updatedObstacle] = await db

@@ -7,16 +7,14 @@ import { getUserById } from './get-user-by-id.js'
 export async function updateUserProfile(userId, changes) {
   const userExists = await getUserById(userId)
 
-  if (changes.username) {
-    userExists.username = changes.username
-  }
+  for (const key in changes) {
+    if (changes[key] && key !== 'password') {
+      userExists[key] = changes[key]
+    }
 
-  if (changes.email) {
-    userExists.email = changes.email
-  }
-
-  if (changes.password) {
-    userExists.password = await bcrypt.hash(changes.password, 8)
+    if (changes.password) {
+      userExists.password = await bcrypt.hash(changes.password, 8)
+    }
   }
 
   const [user] = await db

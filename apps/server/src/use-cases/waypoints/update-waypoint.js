@@ -6,12 +6,10 @@ import { verifyWaypointById } from './verify-waypoint-by-id.js'
 export async function updateWaypoint(waypointId, changes) {
   const waypoint = await verifyWaypointById(waypointId, changes.mapId)
 
-  if (changes.position) {
-    waypoint.position = changes.position
-  }
-
-  if (changes.name) {
-    waypoint.name = changes.name
+  for (const key in changes) {
+    if (changes[key]) {
+      waypoint[key] = changes[key]
+    }
   }
 
   const [updatedWaypoint] = await db
