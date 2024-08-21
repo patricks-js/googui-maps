@@ -1,7 +1,4 @@
 import { ZodError } from 'zod'
-import { InvalidCredentialsError } from '../use-cases/_errors/invalid-credentials.js'
-import { NotFoundError } from '../use-cases/_errors/not-found.js'
-import { UserAlreadyExistsError } from '../use-cases/_errors/user-already-exists.js'
 
 /**
  *
@@ -17,15 +14,15 @@ export async function errorHandler(error, request, reply) {
     )
   }
 
-  if (error instanceof InvalidCredentialsError) {
+  if (error.name === 'InvalidCredentialsError') {
     return reply.badRequest(error.message)
   }
 
-  if (error instanceof UserAlreadyExistsError) {
+  if (error.name === 'UserAlreadyExistsError') {
     return reply.conflict(error.message)
   }
 
-  if (error instanceof NotFoundError) {
+  if (error.name === 'NotFoundError') {
     return reply.notFound(error.message)
   }
 
