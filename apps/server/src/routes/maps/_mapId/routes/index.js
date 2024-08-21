@@ -36,14 +36,14 @@ export default async function (app) {
         x: z.number(),
         y: z.number(),
       }),
-      distance: z.number(),
+      distance: z.number(), // TODO: validate distance
     })
 
     const data = createSchema.parse(request.body)
 
     const { newRoute } = await createBestRoute({ ...data, mapId })
 
-    return { newRoute }
+    return reply.status(201).send({ newRoute })
   })
 
   app.get(
