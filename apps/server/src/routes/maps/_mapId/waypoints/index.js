@@ -49,7 +49,7 @@ export default async function (app) {
 
     const { newWaypoint } = await createWaypoint({ mapId, ...data })
 
-    return { newWaypoint }
+    return reply.status(201).send({ newWaypoint })
   })
 
   app.put(
