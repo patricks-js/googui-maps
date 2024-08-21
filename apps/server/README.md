@@ -92,7 +92,7 @@ This is the API documentation for Googui Maps, containing all the endpoints, the
 - [x] Should be able to create a map
 - [x] Should be able to get a specific map
 - [x] Should be able to edit a map
-- [ ] Should be able to delete a map with all its associated data
+- [x] Should be able to delete a map with all its associated data
 - [x] Should be able to create an obstacle to a map
 - [x] Should be able to get all obstacles of a map
 - [x] Should be able to edit an obstacle of a map
@@ -109,7 +109,7 @@ This is the API documentation for Googui Maps, containing all the endpoints, the
 - [x] Should be able to get all users if is admin
 - [x] Should be able to get user information
 - [x] Should be able to edit a user
-- [x] Should be able to delete a specific user
+- [x] Should be able to delete a specific user with all its associated data
 
 ### Business Requirements
 
@@ -120,13 +120,12 @@ This is the API documentation for Googui Maps, containing all the endpoints, the
 - [ ] Obstacles should be within the map limits
 - [ ] Algorithm should be able to handle multiple obstacles and waypoints
 - [ ] Best path should consider the obstacles and waypoints
-- [ ] Should view the waypoints and obstacles of a map
+- [x] Should view the waypoints and obstacles of a map
 - [x] User should be authenticated
-- [ ] Map limits should be valid
 - [ ] Start and end point should be different
 - [ ] Start and end point should not be blocked by obstacles
-- [ ] Map should not have cyclic dependencies
 - [ ] Route should be within the map limits
+- [ ] Map should not have cyclic dependencies
 
 ### Non-functional Requirements
 

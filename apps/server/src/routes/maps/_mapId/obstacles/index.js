@@ -45,7 +45,9 @@ export default async function (app) {
 
     const data = createSchema.parse(request.body)
 
-    return createObstacle({ mapId, ...data })
+    const { newObstacle } = await createObstacle({ mapId, ...data })
+
+    return reply.status(201).send({ newObstacle })
   })
 
   app.put(

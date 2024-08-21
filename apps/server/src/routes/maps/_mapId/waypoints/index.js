@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { createWaypoint } from '../../../../use-cases/waypoints/create-waypoint.js'
 import { deleteWaypoint } from '../../../../use-cases/waypoints/delete-waypoint.js'
-import { getAllWaypoints } from '../../../../use-cases/waypoints/get-all-waypoint.js'
+import { getAllWaypoints } from '../../../../use-cases/waypoints/get-all-waypoints.js'
 import { updateWaypoint } from '../../../../use-cases/waypoints/update-waypoint.js'
 import {
   createWaypointSchema,
@@ -49,7 +49,7 @@ export default async function (app) {
 
     const { newWaypoint } = await createWaypoint({ mapId, ...data })
 
-    return { newWaypoint }
+    return reply.status(201).send({ newWaypoint })
   })
 
   app.put(

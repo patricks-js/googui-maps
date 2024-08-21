@@ -6,12 +6,10 @@ import { getMapById } from './get-map-by-id.js'
 export async function updateMap(mapId, changes) {
   const { map } = await getMapById(mapId)
 
-  if (changes.width) {
-    map.width = changes.width
-  }
-
-  if (changes.height) {
-    map.height = changes.height
+  for (const key in changes) {
+    if (changes[key]) {
+      map[key] = changes[key]
+    }
   }
 
   const [updatedMap] = await db

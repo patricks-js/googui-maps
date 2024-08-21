@@ -85,9 +85,7 @@ export const createObstacleSchema = {
     201: {
       description: 'Obstacle created successfully',
       type: 'object',
-      properties: {
-        obstacleId: { type: 'number' },
-      },
+      properties: { newObstacle: obstacleSchema },
     },
     401: unauthorizedResponse,
     404: notFoundResponse,

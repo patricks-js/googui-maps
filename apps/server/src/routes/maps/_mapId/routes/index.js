@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { createBestRoute } from '../../../../use-cases/routes/create-best-route.js'
 import { deleteRoute } from '../../../../use-cases/routes/delete-route.js'
-import { getBestRouteById } from '../../../../use-cases/routes/get-best-route-by-id.js'
+import { getBestRouteByMapId } from '../../../../use-cases/routes/get-best-route.js'
 import {
   createRouteSchema,
   deleteRouteSchema,
@@ -36,23 +36,23 @@ export default async function (app) {
         x: z.number(),
         y: z.number(),
       }),
-      distance: z.number(),
+      distance: z.number(), // TODO: validate distance
     })
 
     const data = createSchema.parse(request.body)
 
     const { newRoute } = await createBestRoute({ ...data, mapId })
 
-    return { newRoute }
+    return reply.status(201).send({ newRoute })
   })
 
   app.get(
     '/:routeId',
     { schema: getRouteByIdSchema },
     async (request, reply) => {
-      const { routeId, mapId } = mapRouteIdParamSchema.parse(request.params)
+      const { mapId } = mapIdParamSchema.parse(request.params)
 
-      const { route } = await getBestRouteById(routeId, mapId)
+      const { route } = await getBestRouteByMapId(mapId)
 
       return { route }
     },

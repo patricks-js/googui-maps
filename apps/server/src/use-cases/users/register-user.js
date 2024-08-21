@@ -1,12 +1,11 @@
 import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
-import { eq } from 'drizzle-orm'
 import { db } from '../../db/connection.js'
 import { users } from '../../db/schema/user.js'
 import { UserAlreadyExistsError } from '../_errors/user-already-exists.js'
 
 export async function registerUser(user) {
-  if (await userAlreadyExists(user)) {
+  if (await userAlreadyExistsWithSameEmailOrUsername(user)) {
     throw new UserAlreadyExistsError()
   }
 
@@ -23,7 +22,7 @@ export async function registerUser(user) {
   return { userId: id }
 }
 
-async function userAlreadyExists(user) {
+async function userAlreadyExistsWithSameEmailOrUsername(user) {
   const existsWithSameEmail = await db.query.users.findFirst({
     where: (users, { eq }) => eq(users.email, user.email),
     columns: { id: true },
