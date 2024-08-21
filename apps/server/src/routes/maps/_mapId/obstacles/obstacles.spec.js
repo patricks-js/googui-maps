@@ -14,7 +14,7 @@ import { db } from '../../../../db/connection.js'
 import { users } from '../../../../db/schema/user.js'
 import { getTestJWTToken } from '../../../../utils/get-jwt-token.js'
 
-describe('Maps Routes (e2e)', () => {
+describe('Obstacle Routes (e2e)', () => {
   let _server
   let _token
   const obstacleId = 1
